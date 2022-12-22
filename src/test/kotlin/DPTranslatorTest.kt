@@ -1,9 +1,6 @@
 import com.mattmx.datapack.DataPackTranslator
 import com.mattmx.datapack.mappings.DataPackMappings
 import com.mattmx.datapack.util.color
-import com.mattmx.datapack.util.colorJson
-import com.mattmx.datapack.variables.classes.defineClass
-import com.mattmx.datapack.variables.executes.ExecuteBuilder
 import com.mattmx.datapack.variables.executes.block
 import com.mattmx.datapack.variables.executes.location
 
