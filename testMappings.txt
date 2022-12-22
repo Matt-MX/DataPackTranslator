@@ -20,6 +20,9 @@ variable.operation: scoreboard players operation {target1} {id1} {operation} {ta
 variable.displayName: scoreboard objectives modify {id} displayname {value}
 variable.displayType: scoreboard objectives modify {id} rendertype {value}
 variable.display: scoreboard objectives setdisplay {value} {id}
-# Scheduling
+### Scheduling
 schedule.create: schedule function {name} {time} {action}
 schedule.clear: schedule clear {name}
+function.call: function {name}
+### Other
+comment: #

@@ -4,49 +4,34 @@ import com.google.gson.GsonBuilder
 import com.mattmx.datapack.mappings.DataPackMappings
 import com.mattmx.datapack.objects.McMetaFile
 import com.mattmx.datapack.objects.datafiles.TickLoadFile
-import com.mattmx.datapack.variables.DPVariable
-import com.mattmx.datapack.variables.loop.DPForLoop
-import com.mattmx.datapack.variables.loop.ScheduleTime
-import com.mattmx.datapack.variables.loop.schedule
 import java.io.File
 
 class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
-    // todo allow array of files here
-    val builder = DataPackBuilder()
-    val functions = hashMapOf<String, String>()
+    val functions = hashMapOf<String, FunctionBuilder>()
     val meta = McMetaFile(id)
-    val load = TickLoadFile(id)
-    val tick = TickLoadFile(id)
+    private val load = TickLoadFile(id)
+    private val tick = TickLoadFile(id)
 
-    operator fun invoke(builder: DataPackTranslator.() -> Unit) {
-        // todo run builder and save to list of shit to do
-        builder.invoke(this)
+    operator fun set(fileName: String, value: FunctionBuilder) {
+        functions[fileName] = value
+        if (value.runOnLoad) load(fileName)
+        if (value.runOnTick) load(fileName)
     }
 
-    fun createVar(id: String, default: Any? = null) {
-        builder += DPVariable(mappings, id, default).create()
+    operator fun set(fileName: String, value: FunctionBuilder.() -> Unit) {
+        val func = FunctionBuilder(this)
+        value(func)
+        set(fileName, func)
     }
 
-    fun setVar(id: String, value: Any) {
-        builder += DPVariable(mappings, id).set(value)
+    fun load(id: String): DataPackTranslator {
+        load.values += "${this.id}:$id"
+        return this
     }
 
-    fun removeVar(id: String) {
-        builder += DPVariable(mappings, id).remove()
-    }
-
-    fun addVar(id: String, value: Int) {
-        builder += DPVariable(mappings, id).add(value)
-    }
-
-    fun tellraw(target: String, value: String) {
-        builder += com.mattmx.datapack.commands.tellraw(mappings, target, value)
-    }
-
-    fun repeat(times: Int, period: ScheduleTime = schedule(1, 't'), str: () -> String) {
-        val ret = DPForLoop(this, str, times, period).build()
-        builder += ret.third
-        functions[ret.first] = ret.second
+    fun tick(id: String): DataPackTranslator {
+        tick.values += "${this.id}:$id"
+        return this
     }
 
     fun build() {
@@ -73,22 +58,17 @@ class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
 
         // Write all functions
         if (functions.isNotEmpty()) {
-            functions.forEach { name, content ->
+            functions.forEach { (name, content) ->
                 val file = File("$funcFile/$name.mcfunction")
+                file.parentFile.mkdirs()
                 file.createNewFile()
-                file.writeText(content)
+                file.writeText(
+                    "# Compiled by MattMX's DataPackTranslator.\n" +
+                            "# All rights reserved.\n" +
+                            content.toString()
+                )
             }
         }
-        // Create main file
-        val file = File("$funcFile/main.mcfunction")
-        file.createNewFile()
-        file.writeText(builder.toString())
-
-        val tickFunc = File("$funcFile/tick.mcfunction")
-        tickFunc.createNewFile()
-
-        load.values += "$id:main"
-        tick.values += "$id:tick"
 
         // Create load.json and tick.json
         val tagFunctions = File("$dataFile/minecraft/tags/functions/")
@@ -102,16 +82,5 @@ class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
         tickJsonFile.createNewFile()
         tickJsonFile.writeText(gson.toJson(tick))
 
-    }
-
-    override fun toString() = builder.toString()
-
-    class DataPackBuilder {
-        private val builder = arrayListOf<String>()
-        operator fun plusAssign(line: String) {
-            builder += line
-        }
-
-        override fun toString(): String = builder.joinToString("\n")
     }
 }

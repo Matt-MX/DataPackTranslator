@@ -1,6 +1,7 @@
 package com.mattmx.datapack.variables.loop
 
 import com.mattmx.datapack.DataPackTranslator
+import com.mattmx.datapack.FunctionBuilder
 import com.mattmx.datapack.util.global
 import com.mattmx.datapack.variables.DPVariable
 import com.mattmx.datapack.variables.executes.ExecuteBuilder
@@ -8,28 +9,33 @@ import java.util.*
 
 class DPForLoop(
     val translator: DataPackTranslator,
-    val exec: () -> String,
+    inline val exec: FunctionBuilder.() -> Unit,
     val times: Int,
     val scheduleTime: ScheduleTime
 ) {
 
-    fun build(): Triple<String, String, String> {
+    fun build(): Triple<String, List<String>, List<String>> {
         val varName = "loop_${times}_" + UUID.randomUUID().toString()
         val fileName = "$varName.mcfunction"
-        val variable = DPVariable(translator.mappings, varName, 0)
         val mainList = arrayListOf<String>()
         val functionList = arrayListOf<String>()
 
-        mainList += variable.create()
+        // Make a string to schedule it using @scheduleTime
+        // Run the actual code we want
+        val functionBuilder = FunctionBuilder(translator)
+        exec(functionBuilder)
+        functionList += functionBuilder.toString()
+
+        val variable = DPVariable(translator.mappings, functionBuilder, varName, 0)
+
+        mainList += variable.createString()
+        // The following line will initialize the first execution of the loop, the file will recursively call itself
         mainList += translator.mappings["schedule.create"]!!
             .replace("{name}", "${translator.id}:$fileName")
             .replace("{time}", scheduleTime.toString())
             .replace("{action}", "replace")
-        // Make a string to schedule it using @scheduleTime
-        // Run the actual code we want
-        functionList += exec()
         // Increment the loop timer
-        functionList += variable.add(1)
+        functionList += variable.addString(1)
         // Add a condition to check if we need to cancel at the end of the loop
         functionList += ExecuteBuilder()
             .conditionIf("score $global $varName matches $times")
@@ -42,7 +48,7 @@ class DPForLoop(
                 .replace("{time}", scheduleTime.toString())
                 .replace("{action}", "replace"))
 
-        return Triple(fileName, functionList.joinToString("\n"), mainList.joinToString("\n"))
+        return Triple(fileName, functionList, mainList)
     }
 
 }

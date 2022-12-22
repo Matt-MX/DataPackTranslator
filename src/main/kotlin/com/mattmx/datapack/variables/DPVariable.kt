@@ -1,57 +1,88 @@
 package com.mattmx.datapack.variables
 
+import com.mattmx.datapack.FunctionBuilder
 import com.mattmx.datapack.mappings.DataPackMappings
 import com.mattmx.datapack.util.global
+import kotlin.reflect.KProperty
 
-class DPVariable(val mappings: DataPackMappings, val id: String, initial: Any? = null) {
+class DPVariable(val mappings: DataPackMappings, var function: FunctionBuilder, val id: String, initial: Any? = null) {
     private var value: Any? = initial
 
-    fun create() = mappings["variable.create"]!!
-        .replace("{id}", id) +
-            if (value != null)
-                "\n" + mappings["variable.assign"]!!
-                    .replace("{target}", global)
-                    .replace("{id}", id)
-                    .replace("{value}", value.toString())
-            else ""
+    fun createString() =
+        mappings["variable.create"]!!
+            .replace("{id}", id) +
+                if (value != null)
+                    "\n" + mappings["variable.assign"]!!
+                        .replace("{target}", global)
+                        .replace("{id}", id)
+                        .replace("{value}", value.toString())
+                else ""
 
-    fun set(value: Any) =
+    fun setString(value: Any) =
         mappings["variable.assign"]!!
             .replace("{target}", global)
             .replace("{id}", id)
             .replace("{value}", value.toString())
 
-    fun remove() =
+    fun removeString() =
         mappings["variable.remove"]!!
             .replace("{target}", global)
             .replace("{id}", id)
 
-    fun add(value: Int) =
+
+    fun addString(value: Int) =
         mappings["variable.add"]!!
             .replace("{target}", global)
             .replace("{id}", id)
             .replace("{value}", value.toString())
 
-    fun minus(value: Int) = remove(value)
-    fun remove(value: Int) =
+    fun minusString(value: Int) =
         mappings["variable.remove"]!!
             .replace("{target}", global)
             .replace("{id}", id)
             .replace("{value}", value.toString())
 
-    fun displayName(value: String) =
+    fun displayNameString(value: String) =
         mappings["variable.displayName"]!!
             .replace("{id}", id)
             .replace("{value}", value)
 
-    fun renderType(value: RenderType) =
+    fun renderTypeString(value: RenderType) =
         mappings["variable.displayType"]!!
             .replace("{id}", id)
             .replace("{value}", value.toString())
 
-    fun setDisplay(value: ScoreboardDisplay) =
+    fun setDisplayString(value: ScoreboardDisplay) =
         mappings["variable.display"]!!
             .replace("{id}", id)
             .replace("{value}", value.translatable)
+
+    infix fun add(value: Int) {
+        function += addString(value)
+    }
+    fun create() {
+        function += createString()
+    }
+    infix fun minus(value: Int) {
+        function += minusString(value)
+    }
+    fun destroy() {
+        function += removeString()
+    }
+    infix fun displayName(name: String) {
+        function += displayNameString(name)
+    }
+    infix fun renderType(type: RenderType) {
+        function += renderTypeString(type)
+    }
+    infix fun display(display: ScoreboardDisplay) {
+        function += setDisplayString(display)
+    }
+    infix fun set(value: Any) {
+        function += setString(value)
+    }
+
+    operator fun plusAssign(value: Int) = add(value)
+    operator fun minusAssign(value: Int) = minus(value)
 
 }
