@@ -1,0 +1,24 @@
+execute: execute {as} {target} {action}
+title: title {target} {type} {json}
+tellraw: tellraw {target} {json}
+teleport: teleport {target} {location}
+### Targets
+target.this: @s
+target.entities: @e
+target.nearestPlayer: @p
+target.randomPlayer: @r
+### Variables
+variable.create: scoreboard objectives add {id} dummy
+variable.assign: scoreboard players set {target} {id} {value}
+variable.remove: scoreboard players remove {target} {id}
+# Operations
+variable.add: scoreboard players add {target} {id} {value}
+variable.remove: scoreboard players remove {target} {id} {value}
+variable.operation: scoreboard players operation {target1} {id1} {operation} {target2} {id2}
+# Display
+variable.displayName: scoreboard objectives modify {id} displayname {value}
+variable.displayType: scoreboard objectives modify {id} rendertype {value}
+variable.display: scoreboard objectives setdisplay {value} {id}
+# Scheduling
+schedule.create: schedule function {name} {time} {action}
+schedule.clear: schedule clear {name}
