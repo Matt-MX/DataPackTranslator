@@ -1,6 +1,9 @@
 package com.mattmx.datapack.variables.executes
 
-open class ExecuteCondition(val value: String, val name: String)
+import com.mattmx.datapack.DataPackTranslator
+
+open class ExecuteCondition(val value: String, val name: String) {
+}
 
 class IfCondition(value: String) : ExecuteCondition(value, "if")
 class UnlessCondition(value: String) : ExecuteCondition(value, "unless")

@@ -3,12 +3,14 @@ package com.mattmx.datapack
 import com.google.gson.GsonBuilder
 import com.mattmx.datapack.mappings.DataPackMappings
 import com.mattmx.datapack.objects.McMetaFile
+import com.mattmx.datapack.objects.datafiles.DPFormatConfig
 import com.mattmx.datapack.objects.datafiles.TickLoadFile
 import java.io.File
 
 class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
     val functions = hashMapOf<String, FunctionBuilder>()
     val meta = McMetaFile(id)
+    val config = DPFormatConfig()
     private val load = TickLoadFile(id)
     private val tick = TickLoadFile(id)
 

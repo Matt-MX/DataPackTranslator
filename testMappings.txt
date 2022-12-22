@@ -3,6 +3,42 @@ execute: execute {as} {target} {action}
 title: title {target} {type} {json}
 tellraw: tellraw {target} {json}
 teleport: teleport {target} {location}
+effect: effect {action} {target} {name} {time} {level}
+give: give {target} {item} {count}
+gamerule: gamerule {name} {value}
+gamemode: gamemode {name} {target}
+fill: fill {location1} {location2} {type} {action}
+forceload: forceload {action} {chunk}
+item: item {action} {type} {target|location} {slot} {resetblah vlah}
+kill: kill {target}
+kick: kick {target} {reason}
+me: me {value}
+msg: msg {target} {value}
+particle: particle {type} {location} {spread} {speed} {count} {action}
+placefeature: placefeature {name} {location}
+playsound: playsound {name} {category} {target} {location} {volume} {pitch}
+publish: publish {port}
+recipe: recipe {action} {target} {type}
+reload: reload
+say: say {value}
+seed: seed
+setblock: setblock {location} {type} {action}
+setworldspawn: setworldspawn {location} {angle}
+spawnpoint: spawnpoint {target} {location} {angle}
+spectate: spectate {target1} {target2}
+spreadplayers: spreadplayers {chunk} ~ ~ {distance} {maxRange} {respectTeamsOrUnder}
+stopsound: stopsound {target} {category} {name}
+summon: summon {type} {location} {nbt}
+tag: tag
+team: team
+teammsg: teammsg
+tell: tell {target} {value}
+time: time
+trigger: trigger
+weather: weather
+worldborder: worldborder
+xp: xp
+### Scoreboard
 ### Targets
 target.this: @s
 target.entities: @e
@@ -11,7 +47,7 @@ target.randomPlayer: @r
 ### Variables
 variable.create: scoreboard objectives add {id} dummy
 variable.assign: scoreboard players set {target} {id} {value}
-variable.remove: scoreboard players remove {target} {id}
+variable.destroy: scoreboard players remove {target} {id}
 # Operations
 variable.add: scoreboard players add {target} {id} {value}
 variable.remove: scoreboard players remove {target} {id} {value}

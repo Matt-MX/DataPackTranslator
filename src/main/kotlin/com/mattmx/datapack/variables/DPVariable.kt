@@ -3,7 +3,6 @@ package com.mattmx.datapack.variables
 import com.mattmx.datapack.FunctionBuilder
 import com.mattmx.datapack.mappings.DataPackMappings
 import com.mattmx.datapack.util.global
-import kotlin.reflect.KProperty
 
 class DPVariable(val mappings: DataPackMappings, var function: FunctionBuilder, val id: String, initial: Any? = null) {
     private var value: Any? = initial
@@ -24,8 +23,8 @@ class DPVariable(val mappings: DataPackMappings, var function: FunctionBuilder, 
             .replace("{id}", id)
             .replace("{value}", value.toString())
 
-    fun removeString() =
-        mappings["variable.remove"]!!
+    fun destroyString() =
+        mappings["variable.destroy"]!!
             .replace("{target}", global)
             .replace("{id}", id)
 
@@ -67,7 +66,7 @@ class DPVariable(val mappings: DataPackMappings, var function: FunctionBuilder, 
         function += minusString(value)
     }
     fun destroy() {
-        function += removeString()
+        function += destroyString()
     }
     infix fun displayName(name: String) {
         function += displayNameString(name)
@@ -84,5 +83,13 @@ class DPVariable(val mappings: DataPackMappings, var function: FunctionBuilder, 
 
     operator fun plusAssign(value: Int) = add(value)
     operator fun minusAssign(value: Int) = minus(value)
+    operator fun inc(): DPVariable {
+        plusAssign(1)
+        return this
+    }
+    operator fun dec() : DPVariable {
+        minusAssign(1)
+        return this
+    }
 
 }

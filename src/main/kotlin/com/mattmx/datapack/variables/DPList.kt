@@ -12,8 +12,10 @@ class DPList(val name: String, val function: FunctionBuilder) {
         function.variable("${name}_size").set(0)
     }
 
-    fun set(index: Int, value: Any) {
+    operator fun set(index: Int, value: Any) {
         function.variable("${name}_$index").set(value)
     }
+
+    operator fun get(index: Int) = function.variable("${name}_$index")
 
 }

@@ -6,16 +6,16 @@ import com.mattmx.datapack.variables.DPVariable
 import com.mattmx.datapack.variables.executes.ExecuteBuilder
 import java.util.*
 
-class DPForLoop(
+class DPWhileLoop(
     val translator: DataPackTranslator,
     inline val exec: LoopInvocation.() -> Unit,
-    val times: Int,
+    val shouldContinue: String?,
     val scheduleTime: ScheduleTime
 ) : DPLoop() {
-    override var varName = "loop_${times}_" + UUID.randomUUID().toString()
+    override var varName = "loop_while_" + UUID.randomUUID().toString()
 
     fun build(): Triple<String, List<String>, List<String>> {
-        val fileName = "${translator.config.forLoopStorage}$varName.mcfunction"
+        val fileName = "${translator.config.whileLoopStorage}$varName.mcfunction"
         val mainList = arrayListOf<String>()
         val functionList = arrayListOf<String>()
 
@@ -35,15 +35,11 @@ class DPForLoop(
             .replace("{action}", "replace")
         // Increment the loop timer
         functionList += variable.addString(1)
-        // Add a condition to check if we need to cancel at the end of the loop
+        // todo check if we need to cancel
+        shouldContinue?.let {
+
+        }
         functionList += ExecuteBuilder(functionBuilder)
-            .conditionIf("score $global $varName matches $times")
-            .run {
-                this += translator.mappings["schedule.clear"]!!
-                    .replace("{name}", "${translator.id}:$fileName")
-            }.toString()
-        functionList += ExecuteBuilder(functionBuilder)
-            .conditionUnless("score $global $varName matches $times")
             .run {
                 this += translator.mappings["schedule.create"]!!
                     .replace("{name}", "${translator.id}:$fileName")
