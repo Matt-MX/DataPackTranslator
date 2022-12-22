@@ -10,6 +10,9 @@ fun main() {
     translator {
         tellraw("@a", "&7[&cTest&7] &fDatapack loaded.")
 
+        createVar("x", 30)
+        addVar("x", 30)
+
         repeat(4, schedule(1, 's')) {
             "tellraw @a ${"&c&lHello, world".color().json()}"
         }
