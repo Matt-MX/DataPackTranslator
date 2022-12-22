@@ -1,5 +1,6 @@
 package com.mattmx.datapack.variables.executes.selector
 
+import com.mattmx.datapack.variables.DPVariable
 import net.kyori.adventure.text.NBTComponent
 
 open class EntityCondition<T : Any>(val name: String) {
@@ -60,6 +61,7 @@ enum class Sort {
     RANDOM
 }
 
+fun score(variable: DPVariable) = score(variable.id)
 fun score(name: String) = ScoreCondition(name)
 fun x() = EntityCondition<Double>("x")
 fun y() = EntityCondition<Double>("y")

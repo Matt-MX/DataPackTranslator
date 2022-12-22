@@ -16,6 +16,7 @@ class ExecuteBuilder(val function: FunctionBuilder, val parent: ExecuteBuilder? 
     fun conditionUnless(value: String) = createCondition(UnlessCondition(value))
     fun conditionAs(value: EntitySelector) = createCondition(AsCondition(value))
     fun conditionAt(value: EntitySelector = selected()) = createCondition(AtCondition(value.toString()))
+    fun conditionStore(action: String) = createCondition(StoreCondition(action))
 
     private fun createCondition(condition: ExecuteCondition): ExecuteBuilder {
         val next = ExecuteBuilder(function, this)
@@ -56,6 +57,9 @@ class ExecuteBuilder(val function: FunctionBuilder, val parent: ExecuteBuilder? 
 
     fun execAt(condition: EntitySelector = selected(), builder: ExecuteBuilder.() -> Unit) =
         compile({ it.conditionAt(condition) }, builder)
+
+    fun execStore(action: String, builder: ExecuteBuilder.() -> Unit) =
+        compile({ it.conditionStore(action) }, builder)
 
     inline fun compile(
         condition: (ExecuteBuilder) -> ExecuteBuilder,

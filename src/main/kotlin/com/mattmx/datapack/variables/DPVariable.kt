@@ -3,6 +3,7 @@ package com.mattmx.datapack.variables
 import com.mattmx.datapack.FunctionBuilder
 import com.mattmx.datapack.mappings.DataPackMappings
 import com.mattmx.datapack.util.global
+import java.util.*
 
 class DPVariable(val mappings: DataPackMappings, var function: FunctionBuilder, val id: String, initial: Any? = null) {
     private var value: Any? = initial
@@ -157,17 +158,19 @@ class DPVariable(val mappings: DataPackMappings, var function: FunctionBuilder, 
 
     private fun returnOperation(y: DPVariable, operand: String) : DPVariable {
         // Create a variable to store this value in
-        val beforeApply = DPVariable(mappings, function, "temp_before")
-        function += beforeApply.createString()
+        val beforeApply = DPVariable(mappings, function, "temp_before_${UUID.randomUUID()}")
         // Store this value in that variable
         beforeApply set this
-        // Do the operation
-        function += varOperation(global, id, operand, id2 = y.id)
         // Move that operational change to another variable
-        val afterApply = DPVariable(mappings, function, "temp_after")
-        afterApply set this
+        val afterApply = DPVariable(mappings, function, "temp_after_${UUID.randomUUID()}")
+        function.execStore("result score $global ${afterApply.id}") {
+            run {
+                this += varOperation(global, id, operand, id2 = y.id)
+            }
+        }.build()
         // Restore this value
         this set beforeApply
+        beforeApply.destroy()
         return afterApply
     }
 

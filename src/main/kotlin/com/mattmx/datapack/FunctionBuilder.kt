@@ -114,6 +114,9 @@ open class FunctionBuilder(val translator: DataPackTranslator, val builder: Arra
     fun execAt(condition: EntitySelector = selected(), builder: ExecuteBuilder.() -> Unit) =
         exec({ it.conditionAt(condition) }, builder)
 
+    fun execStore(action: String = "result", builder: ExecuteBuilder.() -> Unit) =
+        exec({ it.conditionStore(action) }, builder)
+
     private inline fun exec(
         condition: (ExecuteBuilder) -> ExecuteBuilder,
         builder: ExecuteBuilder.() -> Unit

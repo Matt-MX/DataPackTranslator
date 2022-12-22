@@ -13,9 +13,8 @@ fun main() {
     translator["main"] = {
         runOnLoad = true
 
-        val x = variable("x")
-        val y = variable("y")
-        x swap y
+        val x = variable("x", 5)
+        val y = variable("y", 2)
         val z = x * y storeAndDestroy "z"
 
         call("notifyloaded")
