@@ -1,3 +1,4 @@
+### Commands
 execute: execute {as} {target} {action}
 title: title {target} {type} {json}
 tellraw: tellraw {target} {json}

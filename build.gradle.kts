@@ -14,6 +14,9 @@ repositories {
 dependencies {
     testImplementation(kotlin("test"))
     implementation("com.google.code.gson:gson:2.10")
+    implementation("net.kyori:adventure-api:4.12.0")
+    implementation("net.kyori:adventure-text-serializer-legacy:4.12.0")
+    implementation("net.kyori:adventure-text-serializer-gson:4.12.0")
 }
 
 tasks.test {

@@ -39,6 +39,10 @@ class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
         builder += DPVariable(mappings, id).add(value)
     }
 
+    fun tellraw(target: String, value: String) {
+        builder += com.mattmx.datapack.commands.tellraw(mappings, target, value)
+    }
+
     fun repeat(times: Int, period: ScheduleTime = schedule(1, 't'), str: () -> String) {
         val ret = DPForLoop(this, str, times, period).build()
         builder += ret.third
