@@ -1,20 +1,24 @@
 package com.mattmx.datapack
 
+import com.mattmx.datapack.enums.EffectAction
+import com.mattmx.datapack.objects.Location
+import com.mattmx.datapack.enums.TitleType
 import com.mattmx.datapack.util.json
 import com.mattmx.datapack.variables.DPList
 import com.mattmx.datapack.variables.DPVariable
 import com.mattmx.datapack.variables.executes.ExecuteBuilder
-import com.mattmx.datapack.variables.executes.ExecuteCondition
-import com.mattmx.datapack.variables.executes.IfCondition
+import com.mattmx.datapack.variables.executes.location
+import com.mattmx.datapack.variables.executes.selector.EntitySelector
+import com.mattmx.datapack.variables.executes.selector.GameMode
+import com.mattmx.datapack.variables.executes.selector.selected
 import com.mattmx.datapack.variables.loop.DPForLoop
 import com.mattmx.datapack.variables.loop.DPWhileLoop
 import com.mattmx.datapack.variables.loop.LoopInvocation
 import com.mattmx.datapack.variables.loop.ScheduleTime
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.TextComponent
 
 open class FunctionBuilder(val translator: DataPackTranslator, val builder: ArrayList<String> = arrayListOf()) {
-
+    val mappings = translator.mappings
     var runOnLoad = false
     var runOnTick = false
 
@@ -22,8 +26,50 @@ open class FunctionBuilder(val translator: DataPackTranslator, val builder: Arra
         builder += line
     }
 
-    fun tellraw(target: String, value: Component) {
-        builder += com.mattmx.datapack.commands.tellraw(translator.mappings, target, value.json())
+    fun tellraw(target: EntitySelector, message: Component) {
+        builder += mappings["tellraw"]!!
+            .replace("{target}", target.build())
+            .replace("{json}", message.json())
+    }
+
+    fun title(target: EntitySelector, type: TitleType, message: Component) {
+        builder += mappings["title"]!!
+            .replace("{target}", target.build())
+            .replace("{type}", type.name.lowercase())
+            .replace("{json}", message.json())
+    }
+
+    fun title(target: EntitySelector, title: Component, subtitle: Component? = null) {
+        title(target, TitleType.TITLE, title)
+        subtitle?.let { title(target, TitleType.SUBTITLE, it) }
+    }
+
+    fun teleport(target: EntitySelector, location: Location) {
+        builder += mappings["teleport"]!!
+            .replace("{target}", target.build())
+            .replace("{location}", location.toString())
+    }
+
+    fun teleport(target: EntitySelector, location: EntitySelector) {
+        builder += mappings["teleport"]!!
+            .replace("{target}", target.build())
+            .replace("{location}", location.build())
+    }
+
+    fun effect(action: EffectAction, target: EntitySelector, name: String, time: Int = 30, level: Int = 0, hide: Boolean = false) {
+        builder += mappings["effect"]!!
+            .replace("{action}", action.name.lowercase())
+            .replace("{target}", target.build())
+            .replace("{name}", if (name.contains(":")) name else "minecraft:$name")
+            .replace("{time}", time.toString())
+            .replace("{level}", level.toString())
+            .replace("{hide}", hide.toString())
+    }
+
+    fun gameMode(target: EntitySelector, gameMode: GameMode) {
+        builder += mappings["gamemode"]!!
+            .replace("{target}", target.build())
+            .replace("{mode}", gameMode.name.lowercase())
     }
 
     fun repeat(times: Int, period: ScheduleTime = ScheduleTime(1, 't'), str: LoopInvocation.() -> Unit) {
@@ -38,19 +84,19 @@ open class FunctionBuilder(val translator: DataPackTranslator, val builder: Arra
         translator.functions[ret.first] = FunctionBuilder(translator, ArrayList(ret.second))
     }
 
-    fun variable(name: String, default: Any? = null) : DPVariable = DPVariable(translator.mappings, this, name, default)
+    fun variable(name: String, default: Any? = null): DPVariable = DPVariable(translator.mappings, this, name, default)
 
     fun comment(value: String) {
         builder += translator.mappings["comment"]!! + value
     }
 
     fun call(function: String) {
-        builder +=  translator.mappings["function.call"]!!
+        builder += translator.mappings["function.call"]!!
             .replace("{name}", "${translator.id}:$function")
     }
 
     fun schedule(function: String, time: ScheduleTime) {
-        builder +=  translator.mappings["schedule.create"]!!
+        builder += translator.mappings["schedule.create"]!!
             .replace("{name}", "${translator.id}:$function")
             .replace("{time}", time.toString())
             .replace("{action}", "replace")
@@ -62,7 +108,16 @@ open class FunctionBuilder(val translator: DataPackTranslator, val builder: Arra
     fun execUnless(vararg conditions: String, builder: ExecuteBuilder.() -> Unit) =
         exec({ it.conditionIf(conditions.joinToString(" unless ")) }, builder)
 
-    private inline fun exec(condition: (ExecuteBuilder) -> ExecuteBuilder, builder: ExecuteBuilder.() -> Unit) : ExecuteBuilder {
+    fun execAs(condition: EntitySelector, builder: ExecuteBuilder.() -> Unit) =
+        exec({ it.conditionAs(condition) }, builder)
+
+    fun execAt(condition: EntitySelector = selected(), builder: ExecuteBuilder.() -> Unit) =
+        exec({ it.conditionAt(condition) }, builder)
+
+    private inline fun exec(
+        condition: (ExecuteBuilder) -> ExecuteBuilder,
+        builder: ExecuteBuilder.() -> Unit
+    ): ExecuteBuilder {
         val execute = ExecuteBuilder(this)
         val toInvoke = condition(execute)
         builder.invoke(toInvoke)
@@ -76,7 +131,7 @@ open class FunctionBuilder(val translator: DataPackTranslator, val builder: Arra
     override fun toString(): String = builder.joinToString("\n")
 }
 
-inline fun functionBuilder(translator: DataPackTranslator, builder: FunctionBuilder.() -> Unit) : FunctionBuilder {
+inline fun functionBuilder(translator: DataPackTranslator, builder: FunctionBuilder.() -> Unit): FunctionBuilder {
     val function = FunctionBuilder(translator)
     builder(function)
     return function

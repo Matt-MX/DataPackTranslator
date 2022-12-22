@@ -3,10 +3,10 @@ execute: execute {as} {target} {action}
 title: title {target} {type} {json}
 tellraw: tellraw {target} {json}
 teleport: teleport {target} {location}
-effect: effect {action} {target} {name} {time} {level}
+effect: effect {action} {target} {name} {time} {level} {hide}
 give: give {target} {item} {count}
 gamerule: gamerule {name} {value}
-gamemode: gamemode {name} {target}
+gamemode: gamemode {mode} {target}
 fill: fill {location1} {location2} {type} {action}
 forceload: forceload {action} {chunk}
 item: item {action} {type} {target|location} {slot} {resetblah vlah}
@@ -38,7 +38,6 @@ trigger: trigger
 weather: weather
 worldborder: worldborder
 xp: xp
-### Scoreboard
 ### Targets
 target.this: @s
 target.entities: @e

@@ -1,39 +1,56 @@
 import com.mattmx.datapack.DataPackTranslator
+import com.mattmx.datapack.enums.EffectAction
+import com.mattmx.datapack.enums.TitleType
 import com.mattmx.datapack.mappings.DataPackMappings
 import com.mattmx.datapack.util.color
-import com.mattmx.datapack.util.colorJson
-import com.mattmx.datapack.variables.classes.defineClass
-import com.mattmx.datapack.variables.executes.ExecuteBuilder
 import com.mattmx.datapack.variables.executes.block
 import com.mattmx.datapack.variables.executes.location
+import com.mattmx.datapack.variables.executes.selector.*
 
 fun main() {
     val translator = DataPackTranslator("testing", DataPackMappings.TESTING)
 
     translator["main"] = {
         runOnLoad = true
-        val testlist = list("arrayTest")
 
-        testlist[0] = -10000
-        testlist[0] -= 100
+        val x = variable("x")
+        val y = variable("y")
+        x swap y
+        val z = x * y storeAndDestroy "z"
 
-        repeat {
-            tellraw("@a", "&cLooping".color())
-        }
+        call("notifyloaded")
+    }
 
-        execIf(block(location()) eq "air", block(location(y = "~1")) eq "air") {
-            execUnless(block(location() + location(y = "-1")) eq "air") {
-                run {
-                    repeat(3) {
-                        tellraw("@a", "&cYou're in air".color())
+    translator["notifyloaded"] = {
+        tellraw(allPlayers(), "&7[&cDataPack&7] Loaded!".color())
+    }
+
+    translator["runeffects"] = {
+        runOnTick = true
+        execAs(allPlayers()) {
+            val blockBelow = block(location() - location(y = "1"))
+            execAt {
+                execIf(blockBelow eq "amethyst_block") {
+                    run {
+                        effect(EffectAction.GIVE, selected(), "speed", 1, 5, true)
+                        title(selected(), "".color(), "&bRun!".color())
+                    }
+                }
+                execIf(blockBelow eq "emerald_block") {
+                    run {
+                        effect(EffectAction.GIVE, selected(), "jump_boost", 1, 5, true)
+                        title(selected(), "".color(), "&aJump!".color())
+                    }
+                }
+                execIf(block(location()) eq "tall_grass") {
+                    run {
+                        effect(EffectAction.GIVE, selected(), "slowness", 1, 2, true)
+                        effect(EffectAction.GIVE, selected(), "blindness", 1, 1, true)
+                        effect(EffectAction.GIVE, selected(), "jump_boost", 1, 250, true)
                     }
                 }
             }
         }.build()
-    }
-
-    translator["notifyLoaded"] = {
-        tellraw("@a", "&7[&cDataPack&7] Loaded!".color())
     }
 
     translator.build()

@@ -17,7 +17,7 @@ class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
     operator fun set(fileName: String, value: FunctionBuilder) {
         functions[fileName] = value
         if (value.runOnLoad) load(fileName)
-        if (value.runOnTick) load(fileName)
+        if (value.runOnTick) tick(fileName)
     }
 
     operator fun set(fileName: String, value: FunctionBuilder.() -> Unit) {
@@ -26,12 +26,12 @@ class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
         set(fileName, func)
     }
 
-    fun load(id: String): DataPackTranslator {
+    private fun load(id: String): DataPackTranslator {
         load.values += "${this.id}:$id"
         return this
     }
 
-    fun tick(id: String): DataPackTranslator {
+    private fun tick(id: String): DataPackTranslator {
         tick.values += "${this.id}:$id"
         return this
     }
@@ -76,10 +76,18 @@ class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
         val tagFunctions = File("$dataFile/minecraft/tags/functions/")
         tagFunctions.mkdirs()
 
+        if (load.values.isEmpty()) {
+            load.values += "$id:load"
+            File("$funcFile/load.mcfunction").createNewFile()
+        }
         val loadJsonFile = File("$tagFunctions/load.json")
         loadJsonFile.createNewFile()
         loadJsonFile.writeText(gson.toJson(load))
 
+        if (tick.values.isEmpty()) {
+            tick.values += "$id:tick"
+            File("$funcFile/tick.mcfunction").createNewFile()
+        }
         val tickJsonFile = File("$tagFunctions/tick.json")
         tickJsonFile.createNewFile()
         tickJsonFile.writeText(gson.toJson(tick))

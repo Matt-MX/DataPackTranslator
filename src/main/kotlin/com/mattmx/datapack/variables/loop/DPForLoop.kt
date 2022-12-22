@@ -41,6 +41,7 @@ class DPForLoop(
             .run {
                 this += translator.mappings["schedule.clear"]!!
                     .replace("{name}", "${translator.id}:$fileName")
+                this += variable.destroyString()
             }.toString()
         functionList += ExecuteBuilder(functionBuilder)
             .conditionUnless("score $global $varName matches $times")

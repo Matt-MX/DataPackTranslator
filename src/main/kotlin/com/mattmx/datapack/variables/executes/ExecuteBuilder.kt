@@ -6,12 +6,16 @@ import com.mattmx.datapack.functionBuilder
 import com.mattmx.datapack.objects.Block
 import com.mattmx.datapack.objects.Location
 import com.mattmx.datapack.util.SmartError
+import com.mattmx.datapack.variables.executes.selector.EntitySelector
+import com.mattmx.datapack.variables.executes.selector.selected
 
 class ExecuteBuilder(val function: FunctionBuilder, val parent: ExecuteBuilder? = null) {
     val children = linkedMapOf<ExecuteCondition, ExecuteBuilder>()
 
     fun conditionIf(value: String) = createCondition(IfCondition(value))
     fun conditionUnless(value: String) = createCondition(UnlessCondition(value))
+    fun conditionAs(value: EntitySelector) = createCondition(AsCondition(value))
+    fun conditionAt(value: EntitySelector = selected()) = createCondition(AtCondition(value.toString()))
 
     private fun createCondition(condition: ExecuteCondition): ExecuteBuilder {
         val next = ExecuteBuilder(function, this)
@@ -46,6 +50,12 @@ class ExecuteBuilder(val function: FunctionBuilder, val parent: ExecuteBuilder? 
 
     fun execUnless(vararg conditions: String, builder: ExecuteBuilder.() -> Unit) =
         compile({ it.conditionUnless(conditions.joinToString(" unless ")) }, builder)
+
+    fun execAs(condition: EntitySelector, builder: ExecuteBuilder.() -> Unit) =
+        compile({ it.conditionAs(condition) }, builder)
+
+    fun execAt(condition: EntitySelector = selected(), builder: ExecuteBuilder.() -> Unit) =
+        compile({ it.conditionAt(condition) }, builder)
 
     inline fun compile(
         condition: (ExecuteBuilder) -> ExecuteBuilder,
