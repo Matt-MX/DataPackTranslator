@@ -21,11 +21,13 @@ class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
         if (value.runOnTick) tick(fileName)
     }
 
-    operator fun set(fileName: String, value: FunctionBuilder.() -> Unit) {
+    inline operator fun set(fileName: String, value: FunctionBuilder.() -> Unit) {
         val func = FunctionBuilder(this)
         value(func)
         set(fileName, func)
     }
+
+    inline operator fun invoke(fileName: String, value: FunctionBuilder.() -> Unit) = set(fileName, value)
 
     private fun load(id: String): DataPackTranslator {
         load.values += "${this.id}:$id"

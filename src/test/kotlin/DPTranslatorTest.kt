@@ -22,7 +22,7 @@ fun main() {
 
     lateinit var usedItemVariable: DPVariable
 
-    translator["vars"] = {
+    translator("vars")  {
         val x = variable("x", default = 9).reset()
         val y = variable("y", default = 2).reset()
 
@@ -46,7 +46,7 @@ fun main() {
 
     }
 
-    translator["countdown"] = {
+    translator("countdown") {
         var opposite = variable("opposite", default = 5)
         repeat(6, 1.seconds()) {
             opposite.update(this)
@@ -55,7 +55,7 @@ fun main() {
         }
     }
 
-    translator["main"] = {
+    translator("main") {
         runOnLoad = true
 
         usedItemVariable = variable("use_carrot_stick", "minecraft.used:minecraft.carrot_on_a_stick")
@@ -64,7 +64,7 @@ fun main() {
         call("notifyloaded")
     }
 
-    translator["carrot_on_stick"] = {
+    translator("carrot_on_stick") {
         runOnTick = true
 
         execAs(allPlayers() where (escore(usedItemVariable) gte 1)) {
@@ -83,11 +83,11 @@ fun main() {
         }.build()
     }
 
-    translator["notifyloaded"] = {
+    translator("notifyloaded") {
         tellraw(allPlayers(), "&7[&cDataPack&7] Loaded!".color())
     }
 
-    translator["runeffects"] = {
+    translator("runeffects") {
         runOnTick = true
         execAs(allPlayers()) {
             val blockBelow = block(location() - location(y = "1"))
