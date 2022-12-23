@@ -44,7 +44,7 @@ open class EntityCondition<T : Any>(val name: String) {
 }
 
 class ScoreCondition(val scoreName: String) : EntityCondition<Int>("scores") {
-    override fun condition(condition: String) = "$name={scoreName=$condition}"
+    override fun condition(condition: String) = "$name={$scoreName=$condition}"
 }
 
 enum class GameMode {

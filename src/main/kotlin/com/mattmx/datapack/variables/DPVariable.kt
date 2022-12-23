@@ -5,8 +5,15 @@ import com.mattmx.datapack.mappings.DataPackMappings
 import com.mattmx.datapack.util.global
 import java.util.*
 
-class DPVariable(val mappings: DataPackMappings, var function: FunctionBuilder, val id: String, initial: Any? = null) {
+class DPVariable(
+    val function: FunctionBuilder,
+    val id: String,
+    val owner: String = global,
+    val type: String = "dummy",
+    initial: Int? = null
+) {
     private var value: Any? = initial
+    private val mappings = function.mappings
 
     init {
         function += createString()
@@ -14,7 +21,8 @@ class DPVariable(val mappings: DataPackMappings, var function: FunctionBuilder, 
 
     fun createString() =
         mappings["variable.create"]!!
-            .replace("{id}", id) +
+            .replace("{id}", id)
+            .replace("{type}", type)+
                 if (value != null)
                     "\n" + mappings["variable.assign"]!!
                         .replace("{target}", global)
@@ -30,7 +38,6 @@ class DPVariable(val mappings: DataPackMappings, var function: FunctionBuilder, 
 
     fun destroyString() =
         mappings["variable.destroy"]!!
-            .replace("{target}", global)
             .replace("{id}", id)
 
 
@@ -98,6 +105,11 @@ class DPVariable(val mappings: DataPackMappings, var function: FunctionBuilder, 
             .replace("{operation}", "><")
     }
 
+    fun reset() {
+        destroy()
+        create()
+    }
+
     infix fun set(value: Any) {
         function += setString(value)
     }
@@ -144,25 +156,25 @@ class DPVariable(val mappings: DataPackMappings, var function: FunctionBuilder, 
     operator fun div(y: DPVariable) = returnOperation(y, "/=")
     operator fun rem(y: DPVariable) = returnOperation(y, "%=")
 
-    infix fun storeAndDestroy(id: String) : DPVariable {
+    infix fun storeSafely(id: String): DPVariable {
         val new = copy(id)
         this.destroy()
         return new
     }
 
-    infix fun copy(id: String) : DPVariable {
-        val new = DPVariable(mappings, function, id)
+    infix fun copy(id: String): DPVariable {
+        val new = DPVariable(function, id)
         new set this
         return new
     }
 
-    private fun returnOperation(y: DPVariable, operand: String) : DPVariable {
+    private fun returnOperation(y: DPVariable, operand: String): DPVariable {
         // Create a variable to store this value in
-        val beforeApply = DPVariable(mappings, function, "temp_before_${UUID.randomUUID()}")
+        val beforeApply = DPVariable(function, "temp_before_${UUID.randomUUID()}")
         // Store this value in that variable
         beforeApply set this
         // Move that operational change to another variable
-        val afterApply = DPVariable(mappings, function, "temp_after_${UUID.randomUUID()}")
+        val afterApply = DPVariable(function, "temp_after_${UUID.randomUUID()}")
         function.execStore("result score $global ${afterApply.id}") {
             run {
                 this += varOperation(global, id, operand, id2 = y.id)
@@ -174,7 +186,13 @@ class DPVariable(val mappings: DataPackMappings, var function: FunctionBuilder, 
         return afterApply
     }
 
-    private fun varOperation(target: String, id: String, operation: String, target2: String = target, id2: String = id) =
+    private fun varOperation(
+        target: String,
+        id: String,
+        operation: String,
+        target2: String = target,
+        id2: String = id
+    ) =
         mappings["variable.operation"]!!
             .replace("{target1}", target)
             .replace("{target2}", target2)

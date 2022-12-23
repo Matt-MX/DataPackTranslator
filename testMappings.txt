@@ -44,9 +44,9 @@ target.entities: @e
 target.nearestPlayer: @p
 target.randomPlayer: @r
 ### Variables
-variable.create: scoreboard objectives add {id} dummy
+variable.create: scoreboard objectives add {id} {type}
 variable.assign: scoreboard players set {target} {id} {value}
-variable.destroy: scoreboard players remove {target} {id}
+variable.destroy: scoreboard objectives remove {id}
 # Operations
 variable.add: scoreboard players add {target} {id} {value}
 variable.remove: scoreboard players remove {target} {id} {value}

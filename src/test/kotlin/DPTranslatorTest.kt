@@ -1,23 +1,43 @@
 import com.mattmx.datapack.DataPackTranslator
 import com.mattmx.datapack.enums.EffectAction
-import com.mattmx.datapack.enums.TitleType
 import com.mattmx.datapack.mappings.DataPackMappings
 import com.mattmx.datapack.util.color
+import com.mattmx.datapack.variables.DPVariable
 import com.mattmx.datapack.variables.executes.block
 import com.mattmx.datapack.variables.executes.location
 import com.mattmx.datapack.variables.executes.selector.*
+import com.mattmx.datapack.variables.loop.seconds
 
 fun main() {
     val translator = DataPackTranslator("testing", DataPackMappings.TESTING)
 
+    lateinit var usedItemVariable: DPVariable
+
     translator["main"] = {
         runOnLoad = true
 
-        val x = variable("x", 5)
-        val y = variable("y", 2)
-        val z = x * y storeAndDestroy "z"
+        usedItemVariable = variable("use_carrot_stick", "minecraft.used:minecraft.carrot_on_a_stick")
+        usedItemVariable.reset()
 
         call("notifyloaded")
+    }
+
+    translator["carrot_on_stick"] = {
+        runOnTick = true
+
+        execAs(allPlayers() where (score(usedItemVariable) gte 1)) {
+            execAt {
+                run {
+                    tellraw(selected(), "&eYou used it!".color())
+                    // Set a variable for this player
+                    repeat(5, 1.seconds()) {
+                        teleport(allPlayers() where (score(usedItemVariable) gte 1), location(y = "~2"))
+                    }
+                    // Only reset if variable is not set
+                    this += "scoreboard players reset @s ${usedItemVariable.id}"
+                }
+            }
+        }.build()
     }
 
     translator["notifyloaded"] = {

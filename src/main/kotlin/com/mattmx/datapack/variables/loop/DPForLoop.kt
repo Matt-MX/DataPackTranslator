@@ -25,14 +25,12 @@ class DPForLoop(
         exec(functionBuilder)
         functionList += functionBuilder.toString()
 
-        variable = DPVariable(translator.mappings, functionBuilder, varName, 0)
+        variable = DPVariable(functionBuilder, varName, initial = 0)
 
         mainList += variable.createString().split("\n")
         // The following line will initialize the first execution of the loop, the file will recursively call itself
-        mainList += translator.mappings["schedule.create"]!!
+        mainList += translator.mappings["function.call"]!!
             .replace("{name}", "${translator.id}:$fileName")
-            .replace("{time}", scheduleTime.toString())
-            .replace("{action}", "replace")
         // Increment the loop timer
         functionList += variable.addString(1)
         // Add a condition to check if we need to cancel at the end of the loop

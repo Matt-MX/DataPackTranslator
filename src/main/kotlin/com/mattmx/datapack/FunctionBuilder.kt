@@ -56,7 +56,14 @@ open class FunctionBuilder(val translator: DataPackTranslator, val builder: Arra
             .replace("{location}", location.build())
     }
 
-    fun effect(action: EffectAction, target: EntitySelector, name: String, time: Int = 30, level: Int = 0, hide: Boolean = false) {
+    fun effect(
+        action: EffectAction,
+        target: EntitySelector,
+        name: String,
+        time: Int = 30,
+        level: Int = 0,
+        hide: Boolean = false
+    ) {
         builder += mappings["effect"]!!
             .replace("{action}", action.name.lowercase())
             .replace("{target}", target.build())
@@ -84,7 +91,11 @@ open class FunctionBuilder(val translator: DataPackTranslator, val builder: Arra
         translator.functions[ret.first] = FunctionBuilder(translator, ArrayList(ret.second))
     }
 
-    fun variable(name: String, default: Any? = null): DPVariable = DPVariable(translator.mappings, this, name, default)
+    fun variable(name: String, type: String = "dummy", default: Int? = null): DPVariable =
+        DPVariable(this, name, type = type, initial = default)
+
+    fun variable(name: String, selector: EntitySelector = selected(), type: String = "dummy", default: Int? = null): DPVariable =
+        DPVariable(this, name, selector.build(), type, default)
 
     fun comment(value: String) {
         builder += translator.mappings["comment"]!! + value
