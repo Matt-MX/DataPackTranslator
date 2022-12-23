@@ -85,7 +85,7 @@ open class FunctionBuilder(val translator: DataPackTranslator, val builder: Arra
         translator.functions[ret.first] = FunctionBuilder(translator, ArrayList(ret.second))
     }
 
-    fun repeat(period: ScheduleTime = ScheduleTime(1, 't'), str: FunctionBuilder.() -> Unit) {
+    fun repeat(period: ScheduleTime = ScheduleTime(1, 't'), str: LoopInvocation.() -> Unit) {
         val ret = DPWhileLoop(translator, str, null, period).build()
         builder += ret.third
         translator.functions[ret.first] = FunctionBuilder(translator, ArrayList(ret.second))

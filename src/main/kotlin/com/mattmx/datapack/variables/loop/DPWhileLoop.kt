@@ -25,7 +25,7 @@ class DPWhileLoop(
         exec(functionBuilder)
         functionList += functionBuilder.toString()
 
-        variable = DPVariable(translator.mappings, functionBuilder, varName, 0)
+        variable = DPVariable(functionBuilder, varName, initial = 0)
 
         mainList += variable.createString().split("\n")
         // The following line will initialize the first execution of the loop, the file will recursively call itself

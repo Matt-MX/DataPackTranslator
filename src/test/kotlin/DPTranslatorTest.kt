@@ -60,14 +60,17 @@ fun main() {
             execAt {
                 execIf(blockBelow eq "amethyst_block") {
                     run {
-                        effect(EffectAction.GIVE, selected(), "speed", 1, 5, true)
-                        title(selected(), "".color(), "&bRun!".color())
+                        effect(EffectAction.GIVE, selected(), "speed", 1, 7, true)
                     }
                 }
                 execIf(blockBelow eq "emerald_block") {
                     run {
                         effect(EffectAction.GIVE, selected(), "jump_boost", 1, 5, true)
-                        title(selected(), "".color(), "&aJump!".color())
+                    }
+                }
+                execIf(blockBelow eq "redstone_block") {
+                    run {
+                        effect(EffectAction.GIVE, selected(), "regeneration", 3, 1, true)
                     }
                 }
                 execIf(block(location()) eq "tall_grass") {
