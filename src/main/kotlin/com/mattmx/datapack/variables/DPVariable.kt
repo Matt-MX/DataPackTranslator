@@ -3,10 +3,11 @@ package com.mattmx.datapack.variables
 import com.mattmx.datapack.FunctionBuilder
 import com.mattmx.datapack.mappings.DataPackMappings
 import com.mattmx.datapack.util.global
+import net.kyori.adventure.text.Component
 import java.util.*
 
 class DPVariable(
-    val function: FunctionBuilder,
+    var function: FunctionBuilder,
     val id: String,
     val owner: String = global,
     val type: String = "dummy",
@@ -18,6 +19,12 @@ class DPVariable(
     init {
         function += createString()
     }
+
+    fun update(function: FunctionBuilder) {
+        this.function = function
+    }
+
+    fun component() = Component.score(this.owner, this.id)
 
     fun createString() =
         mappings["variable.create"]!!

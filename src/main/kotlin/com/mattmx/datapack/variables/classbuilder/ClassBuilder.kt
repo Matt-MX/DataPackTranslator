@@ -7,8 +7,8 @@ class ClassBuilder(val functionBuilder: FunctionBuilder, val name: String) {
     val variables = arrayListOf<DPVariable>()
     val functions = arrayListOf<FunctionBuilder>()
 
-    fun variable(name: String, value: Any? = null) {
-        variables += DPVariable(functionBuilder.translator.mappings, functionBuilder, name, value)
+    fun variable(name: String, value: Int? = null) {
+        variables += DPVariable(functionBuilder, name, initial = value)
     }
 
     fun function(name: String, vararg args: Any) {

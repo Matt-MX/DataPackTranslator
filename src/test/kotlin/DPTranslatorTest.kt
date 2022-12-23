@@ -2,7 +2,9 @@ import com.mattmx.datapack.DataPackTranslator
 import com.mattmx.datapack.enums.EffectAction
 import com.mattmx.datapack.mappings.DataPackMappings
 import com.mattmx.datapack.util.color
+import com.mattmx.datapack.util.plus
 import com.mattmx.datapack.variables.DPVariable
+import com.mattmx.datapack.variables.classbuilder.defineClass
 import com.mattmx.datapack.variables.executes.block
 import com.mattmx.datapack.variables.executes.location
 import com.mattmx.datapack.variables.executes.selector.*
@@ -14,14 +16,27 @@ fun main() {
     lateinit var usedItemVariable: DPVariable
 
     translator["vars"] = {
+        val x = variable("x", default = 10)
+        val y = variable("y", default = 2)
 
-        val x = variable("x")
-        val y = variable("y")
+        tellraw(allPlayers(), "&7x = ".color() + x.component())
+        tellraw(allPlayers(), "&7y = ".color() + y.component())
 
         // Since kotlin doesn't have an override for assignment, we'll use an infix function
         // to store the result safely into a variable called "z", that is then returned.
         val z = x * y storeSafely "z"
 
+        tellraw(allPlayers(), "&7z = x * y (=".color() + z.component() + ")".color())
+
+    }
+
+    translator["countdown"] = {
+        var opposite = variable("opposite", default = 5)
+        repeat(6, 1.seconds()) {
+            opposite.update(this)
+            title(allPlayers(), "&6Countdown".color(), "&eDone in ".color() + opposite.component() + "s".color())
+            opposite--
+        }
     }
 
     translator["main"] = {
@@ -38,6 +53,7 @@ fun main() {
 
         execAs(allPlayers() where (score(usedItemVariable) gte 1)) {
             execAt {
+                // todo different run functions should be in different func files for efficiency
                 run {
                     tellraw(selected(), "&eYou used it!".color())
                     // Set a variable for this player
