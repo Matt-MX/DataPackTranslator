@@ -15,8 +15,9 @@ class DPForLoop(
     override var varName = "loop_${times}_" + UUID.randomUUID().toString()
 
     fun build(): Triple<String, List<String>, List<String>> {
-        val fileName = "${translator.config.forLoopStorage}$varName.mcfunction"
+//        val fileName = "${translator.config.forLoopStorage}$varName.mcfunction"
         val mainList = arrayListOf<String>()
+        val fileName = "fors/$varName.mcfunction"
         val functionList = arrayListOf<String>()
 
         // Make a string to schedule it using @scheduleTime

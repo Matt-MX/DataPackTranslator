@@ -2,10 +2,11 @@ package com.mattmx.datapack.variables
 
 import com.mattmx.datapack.FunctionBuilder
 import com.mattmx.datapack.util.global
+import net.kyori.adventure.text.Component
 import java.util.*
 
 class DPVariable(
-    val function: FunctionBuilder,
+    var function: FunctionBuilder,
     val id: String,
     val owner: String = global,
     val type: String = "dummy",
@@ -17,6 +18,12 @@ class DPVariable(
     init {
         function += createString()
     }
+
+    fun update(function: FunctionBuilder) {
+        this.function = function
+    }
+
+    fun component() = Component.score(this.owner, this.id)
 
     fun createString() =
         mappings["variable.create"]!!
@@ -75,7 +82,7 @@ class DPVariable(
         function += createString()
     }
 
-    infix fun minus(value: Int) {
+    infix fun take(value: Int) {
         function += minusString(value)
     }
 
@@ -122,7 +129,7 @@ class DPVariable(
         function += varOperation(global, id, "+=", id2 = value.id)
     }
 
-    operator fun minusAssign(value: Int) = minus(value)
+    operator fun minusAssign(value: Int) = take(value)
     operator fun minusAssign(value: DPVariable) {
         function += varOperation(global, id, "-=", id2 = value.id)
     }
@@ -150,10 +157,15 @@ class DPVariable(
     }
 
     operator fun times(y: DPVariable) = returnOperation(y, "*=")
+    operator fun times(y: Int) = returnOperation(y, "*=")
     operator fun plus(y: DPVariable) = returnOperation(y, "+=")
+    operator fun plus(y: Int) = returnOperation(y, "+=")
     operator fun minus(y: DPVariable) = returnOperation(y, "-=")
+    operator fun minus(y: Int) = returnOperation(y, "-=")
     operator fun div(y: DPVariable) = returnOperation(y, "/=")
+    operator fun div(y: Int) = returnOperation(y, "/=")
     operator fun rem(y: DPVariable) = returnOperation(y, "%=")
+    operator fun rem(y: Int) = returnOperation(y, "%=")
 
     infix fun storeSafely(id: String): DPVariable {
         val new = copy(id)
@@ -165,6 +177,13 @@ class DPVariable(
         val new = DPVariable(function, id)
         new set this
         return new
+    }
+
+    private fun returnOperation(y: Int, operand: String) : DPVariable {
+        val temp = DPVariable(function, "unnamed_var_temp", initial = y)
+        val returnVal = returnOperation(temp, operand)
+        temp.destroy()
+        return returnVal
     }
 
     private fun returnOperation(y: DPVariable, operand: String): DPVariable {

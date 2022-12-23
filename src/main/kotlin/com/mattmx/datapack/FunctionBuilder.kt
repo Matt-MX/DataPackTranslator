@@ -1,14 +1,14 @@
 package com.mattmx.datapack
 
 import com.mattmx.datapack.enums.EffectAction
-import com.mattmx.datapack.objects.Location
+import com.mattmx.datapack.variables.Location
 import com.mattmx.datapack.enums.TitleType
 import com.mattmx.datapack.util.json
 import com.mattmx.datapack.variables.DPList
 import com.mattmx.datapack.variables.DPVariable
 import com.mattmx.datapack.variables.executes.ExecuteBuilder
-import com.mattmx.datapack.variables.executes.location
 import com.mattmx.datapack.variables.executes.selector.EntitySelector
+import com.mattmx.datapack.variables.executes.selector.ExecIfCondition
 import com.mattmx.datapack.variables.executes.selector.GameMode
 import com.mattmx.datapack.variables.executes.selector.selected
 import com.mattmx.datapack.variables.loop.DPForLoop
@@ -113,7 +113,7 @@ open class FunctionBuilder(val translator: DataPackTranslator, val builder: Arra
             .replace("{action}", "replace")
     }
 
-    fun execIf(vararg conditions: String, builder: ExecuteBuilder.() -> Unit) =
+    fun execIf(vararg conditions: ExecIfCondition<*>, builder: ExecuteBuilder.() -> Unit) =
         exec({ it.conditionIf(conditions.joinToString(" if ")) }, builder)
 
     fun execUnless(vararg conditions: String, builder: ExecuteBuilder.() -> Unit) =

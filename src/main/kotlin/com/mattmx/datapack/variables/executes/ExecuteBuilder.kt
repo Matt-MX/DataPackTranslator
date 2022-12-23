@@ -1,11 +1,8 @@
 package com.mattmx.datapack.variables.executes
 
-import com.mattmx.datapack.DataPackTranslator
 import com.mattmx.datapack.FunctionBuilder
-import com.mattmx.datapack.functionBuilder
-import com.mattmx.datapack.objects.Block
-import com.mattmx.datapack.objects.Location
-import com.mattmx.datapack.util.SmartError
+import com.mattmx.datapack.variables.Block
+import com.mattmx.datapack.variables.Location
 import com.mattmx.datapack.variables.executes.selector.EntitySelector
 import com.mattmx.datapack.variables.executes.selector.selected
 

@@ -3,8 +3,8 @@ package com.mattmx.datapack
 import com.google.gson.GsonBuilder
 import com.mattmx.datapack.mappings.DataPackMappings
 import com.mattmx.datapack.objects.McMetaFile
-import com.mattmx.datapack.objects.datafiles.DPFormatConfig
-import com.mattmx.datapack.objects.datafiles.TickLoadFile
+import com.mattmx.datapack.variables.datafiles.DPFormatConfig
+import com.mattmx.datapack.variables.datafiles.TickLoadFile
 import java.io.File
 
 class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
