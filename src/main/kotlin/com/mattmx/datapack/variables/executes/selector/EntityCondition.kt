@@ -1,7 +1,6 @@
 package com.mattmx.datapack.variables.executes.selector
 
 import com.mattmx.datapack.variables.DPVariable
-import net.kyori.adventure.text.NBTComponent
 
 open class EntityCondition<T : Any>(val name: String) {
     private var conditions = arrayListOf<String>()
@@ -43,7 +42,7 @@ open class EntityCondition<T : Any>(val name: String) {
     fun build() = conditions.joinToString(",")
 }
 
-class ScoreCondition(val scoreName: String) : EntityCondition<Int>("scores") {
+class EntityScoreCondition(val scoreName: String) : EntityCondition<Int>("scores") {
     override fun condition(condition: String) = "$name={$scoreName=$condition}"
 }
 
@@ -61,8 +60,8 @@ enum class Sort {
     RANDOM
 }
 
-fun score(variable: DPVariable) = score(variable.id)
-fun score(name: String) = ScoreCondition(name)
+fun escore(variable: DPVariable) = escore(variable.id)
+fun escore(name: String) = EntityScoreCondition(name)
 fun x() = EntityCondition<Double>("x")
 fun y() = EntityCondition<Double>("y")
 fun z() = EntityCondition<Double>("z")

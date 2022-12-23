@@ -1,4 +1,4 @@
-package com.mattmx.datapack.objects
+package com.mattmx.datapack.variables
 
 class Block(val location: Location) {
 

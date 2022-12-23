@@ -4,14 +4,20 @@ import com.mattmx.datapack.mappings.DataPackMappings
 import com.mattmx.datapack.util.color
 import com.mattmx.datapack.util.plus
 import com.mattmx.datapack.variables.DPVariable
-import com.mattmx.datapack.variables.classbuilder.defineClass
 import com.mattmx.datapack.variables.executes.block
 import com.mattmx.datapack.variables.executes.location
 import com.mattmx.datapack.variables.executes.selector.*
+import com.mattmx.datapack.variables.functions.sqrt
 import com.mattmx.datapack.variables.loop.seconds
 
 fun main() {
     val translator = DataPackTranslator("testing", DataPackMappings.TESTING)
+
+//    translator.config {
+//        // Adds module math, math functions can now be called.
+//        modules += "math"
+//        executeBlockStoredInFunction = true
+//    }
 
     lateinit var usedItemVariable: DPVariable
 
@@ -19,14 +25,22 @@ fun main() {
         val x = variable("x", default = 10)
         val y = variable("y", default = 2)
 
+        sqrt(x, y)
+
         tellraw(allPlayers(), "&7x = ".color() + x.component())
         tellraw(allPlayers(), "&7y = ".color() + y.component())
 
         // Since kotlin doesn't have an override for assignment, we'll use an infix function
         // to store the result safely into a variable called "z", that is then returned.
-        val z = x * y storeSafely "z"
+        val z = x * x * y storeSafely "z"
 
         tellraw(allPlayers(), "&7z = x * y (=".color() + z.component() + ")".color())
+
+        execIf(score("x") gte 10) {
+            run {
+                tellraw(allPlayers() + (name() eq "MattMX"), "&dHi, matt, x >= 10".color())
+            }
+        }.build()
 
     }
 
@@ -51,14 +65,14 @@ fun main() {
     translator["carrot_on_stick"] = {
         runOnTick = true
 
-        execAs(allPlayers() where (score(usedItemVariable) gte 1)) {
+        execAs(allPlayers() where (escore(usedItemVariable) gte 1)) {
             execAt {
                 // todo different run functions should be in different func files for efficiency
                 run {
                     tellraw(selected(), "&eYou used it!".color())
                     // Set a variable for this player
                     repeat(5, 1.seconds()) {
-                        teleport(allPlayers() where (score(usedItemVariable) gte 1), location(y = "~2"))
+                        teleport(allPlayers() where (escore(usedItemVariable) gte 1), location(y = "~2"))
                     }
                     // Only reset if variable is not set
                     this += "scoreboard players reset @s ${usedItemVariable.id}"
