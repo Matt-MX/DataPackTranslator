@@ -3,6 +3,7 @@ package com.mattmx.datapack
 import com.google.gson.GsonBuilder
 import com.mattmx.datapack.mappings.DataPackMappings
 import com.mattmx.datapack.objects.McMetaFile
+import com.mattmx.datapack.util.EntryType
 import com.mattmx.datapack.variables.datafiles.DPFormatConfig
 import com.mattmx.datapack.variables.datafiles.TickLoadFile
 import java.io.File
@@ -71,6 +72,25 @@ class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
                             + "###########################################\n"
                             + content.toString()
                 )
+            }
+        }
+
+        // Now we can apply modules
+        if (config.modules.isNotEmpty()) {
+            config.modules.forEach {
+                // Write all files
+                it.all().forEach { (fileLocation, fileContent) ->
+                    val file = File("$dataFile/${it.name}/functions/$fileLocation")
+                    file.parentFile.mkdirs()
+                    file.createNewFile()
+                    file.writeText(fileContent)
+                }
+                // Add entry points
+                it.entryPoints.forEach { entry ->
+                    if (entry.type == EntryType.LOAD) {
+                        load.values += "${it.name}:${entry.name}"
+                    } else tick.values += "${it.name}:${entry.name}"
+                }
             }
         }
 

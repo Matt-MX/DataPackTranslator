@@ -1,6 +1,7 @@
 {
   "id": "testing",
   "values": [
-    "testing:main"
+    "testing:main",
+    "nnmath:setup"
   ]
 }

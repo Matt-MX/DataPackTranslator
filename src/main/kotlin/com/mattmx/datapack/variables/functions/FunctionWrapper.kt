@@ -16,10 +16,16 @@ import com.mattmx.datapack.variables.executes.selector.player
  * @param path of the function so we know where to get it once built
  * @param
  */
-class FunctionWrapper(val id: String, val path: String, vararg params: Pair<String, String>) {
-    private val params = params.toList()
+class FunctionWrapper(
+    val id: String,
+    var namespace: String? = null,
+    var path: String = "",
+    var out: Pair<String, String> = Pair("", ""),
+    vararg params: Pair<String, String>
+) {
+    var params = params.toMutableList()
 
-    operator fun invoke(functionBuilder: FunctionBuilder, vararg arguments: Any) {
+    operator fun invoke(functionBuilder: FunctionBuilder, vararg arguments: Any): DPVariable {
         if (arguments.size != params.size)
             throw Error("FunctionWrapper $id requires ${params.size} parameters. ($path)")
         // Need to set the variables to their values
@@ -28,11 +34,23 @@ class FunctionWrapper(val id: String, val path: String, vararg params: Pair<Stri
             val variable = functionBuilder.variable(it.first, player(it.second))
             if (arguments[index] is DPVariable) {
                 // set to value
+                variable set arguments[index] as DPVariable
             } else {
                 variable set arguments[index]
             }
         }
-        functionBuilder.call(path)
+        namespace?.also {
+            functionBuilder.call("$it:$path")
+        } ?: run {
+            functionBuilder.call(path)
+        }
+        // out.first = objective id, out.second = objective name
+        return DPVariable(functionBuilder, out.first, out.second)
     }
+}
 
+inline fun functionWrapper(name: String, builder: FunctionWrapper.() -> Unit) : FunctionWrapper {
+    val function = FunctionWrapper(name)
+    builder(function)
+    return function
 }

@@ -15,10 +15,6 @@ class DPVariable(
     private var value: Any? = initial
     private val mappings = function.mappings
 
-    init {
-        function += createString()
-    }
-
     fun update(function: FunctionBuilder) {
         this.function = function
     }
@@ -31,14 +27,14 @@ class DPVariable(
             .replace("{type}", type)+
                 if (value != null)
                     "\n" + mappings["variable.assign"]!!
-                        .replace("{target}", global)
+                        .replace("{target}", owner)
                         .replace("{id}", id)
                         .replace("{value}", value.toString())
                 else ""
 
     fun setString(value: Any) =
         mappings["variable.assign"]!!
-            .replace("{target}", global)
+            .replace("{target}", owner)
             .replace("{id}", id)
             .replace("{value}", value.toString())
 
@@ -49,13 +45,13 @@ class DPVariable(
 
     fun addString(value: Int) =
         mappings["variable.add"]!!
-            .replace("{target}", global)
+            .replace("{target}", owner)
             .replace("{id}", id)
             .replace("{value}", value.toString())
 
     fun minusString(value: Int) =
         mappings["variable.remove"]!!
-            .replace("{target}", global)
+            .replace("{target}", owner)
             .replace("{id}", id)
             .replace("{value}", value.toString())
 
@@ -78,8 +74,9 @@ class DPVariable(
         function += addString(value)
     }
 
-    fun create() {
+    fun create() : DPVariable {
         function += createString()
+        return this
     }
 
     infix fun take(value: Int) {
@@ -104,16 +101,17 @@ class DPVariable(
 
     infix fun swap(value: DPVariable) {
         function += mappings["variable.operation"]!!
-            .replace("{target1}", global)
-            .replace("{target2}", global)
+            .replace("{target1}", owner)
+            .replace("{target2}", value.owner)
             .replace("{id1}", id)
             .replace("{id2}", value.id)
             .replace("{operation}", "><")
     }
 
-    fun reset() {
+    fun reset() : DPVariable {
         destroy()
         create()
+        return this
     }
 
     infix fun set(value: Any) {
@@ -121,29 +119,29 @@ class DPVariable(
     }
 
     infix fun set(value: DPVariable) {
-        function += varOperation(global, id, "=", id2 = value.id)
+        function += varOperation(owner, id, "=", value.owner, value.id)
     }
 
     operator fun plusAssign(value: Int) = add(value)
     operator fun plusAssign(value: DPVariable) {
-        function += varOperation(global, id, "+=", id2 = value.id)
+        function += varOperation(owner, id, "+=", value.owner, id2 = value.id)
     }
 
     operator fun minusAssign(value: Int) = take(value)
     operator fun minusAssign(value: DPVariable) {
-        function += varOperation(global, id, "-=", id2 = value.id)
+        function += varOperation(owner, id, "-=", value.owner, id2 = value.id)
     }
 
     operator fun divAssign(value: DPVariable) {
-        function += varOperation(global, id, "/=", id2 = value.id)
+        function += varOperation(owner, id, "/=", value.owner, id2 = value.id)
     }
 
     operator fun timesAssign(value: DPVariable) {
-        function += varOperation(global, id, "*=", id2 = value.id)
+        function += varOperation(owner, id, "*=", value.owner, id2 = value.id)
     }
 
     operator fun remAssign(value: DPVariable) {
-        function += varOperation(global, id, "%=", id2 = value.id)
+        function += varOperation(owner, id, "%=", value.owner, id2 = value.id)
     }
 
     operator fun inc(): DPVariable {
@@ -174,7 +172,7 @@ class DPVariable(
     }
 
     infix fun copy(id: String): DPVariable {
-        val new = DPVariable(function, id)
+        val new = DPVariable(function, id).create()
         new set this
         return new
     }

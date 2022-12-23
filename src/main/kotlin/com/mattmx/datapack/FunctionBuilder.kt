@@ -103,7 +103,10 @@ open class FunctionBuilder(val translator: DataPackTranslator, val builder: Arra
 
     fun call(function: String) {
         builder += translator.mappings["function.call"]!!
-            .replace("{name}", "${translator.id}:$function")
+            .replace("{name}",
+                if (function.contains(":")) function
+                else "${translator.id}:$function"
+            )
     }
 
     fun schedule(function: String, time: ScheduleTime) {

@@ -1,31 +1,33 @@
 import com.mattmx.datapack.DataPackTranslator
 import com.mattmx.datapack.enums.EffectAction
 import com.mattmx.datapack.mappings.DataPackMappings
-import com.mattmx.datapack.util.color
-import com.mattmx.datapack.util.plus
+import com.mattmx.datapack.util.*
 import com.mattmx.datapack.variables.DPVariable
 import com.mattmx.datapack.variables.executes.block
 import com.mattmx.datapack.variables.executes.location
 import com.mattmx.datapack.variables.executes.selector.*
+import com.mattmx.datapack.variables.functions.FunctionWrapper
+import com.mattmx.datapack.variables.functions.random
 import com.mattmx.datapack.variables.functions.sqrt
 import com.mattmx.datapack.variables.loop.seconds
 
 fun main() {
     val translator = DataPackTranslator("testing", DataPackMappings.TESTING)
 
-//    translator.config {
-//        // Adds module math, math functions can now be called.
-//        modules += "math"
-//        executeBlockStoredInFunction = true
-//    }
+    translator.config {
+        // Adds module math, math functions like sqrt can now be called.
+        modules += Module.MATH
+        executeBlockStoredInFunction = true
+    }
 
     lateinit var usedItemVariable: DPVariable
 
     translator["vars"] = {
-        val x = variable("x", default = 10)
-        val y = variable("y", default = 2)
+        val x = variable("x", default = 9).reset()
+        val y = variable("y", default = 2).reset()
 
-        sqrt(x, y)
+        val result = random(0, 100) copy "result"
+        tellraw(allPlayers(), "&7Random number: ".color() + result.component())
 
         tellraw(allPlayers(), "&7x = ".color() + x.component())
         tellraw(allPlayers(), "&7y = ".color() + y.component())

@@ -1,5 +1,7 @@
 package com.mattmx.datapack.variables.datafiles
 
+import com.mattmx.datapack.util.Module
+
 class DPFormatConfig {
     /**
      * Configuration for storage of loops.
@@ -12,7 +14,7 @@ class DPFormatConfig {
      * A list of extra modules which you want to build with.
      * Available modules can be found in the resources/modules folder.
      */
-    var modules = arrayListOf<String>()
+    var modules = arrayListOf<Module>()
 
     /**
      * This variable determines if execute run blocks are to be stored in
@@ -25,5 +27,5 @@ class DPFormatConfig {
      */
     var executeBlockStoredInFunction = false
 
-//    inline operator fun invoke(builder: DPFormatConfig.() -> Unit) = builder(this)
+    inline operator fun invoke(builder: DPFormatConfig.() -> Unit) = builder(this)
 }
