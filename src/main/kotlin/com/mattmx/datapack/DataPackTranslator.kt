@@ -65,9 +65,11 @@ class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
                 file.parentFile.mkdirs()
                 file.createNewFile()
                 file.writeText(
-                    "# Compiled by MattMX's DataPackTranslator.\n" +
-                            "# All rights reserved.\n" +
-                            content.toString()
+                    "###########################################\n"
+                            + "#         COMPILED BY MATTMX'S            #\n"
+                            + "#       Kotlin DataPack Translator        #\n"
+                            + "###########################################\n"
+                            + content.toString()
                 )
             }
         }

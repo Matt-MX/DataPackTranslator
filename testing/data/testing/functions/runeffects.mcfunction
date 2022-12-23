@@ -1,5 +1,7 @@
-# Compiled by MattMX's DataPackTranslator.
-# All rights reserved.
+###########################################
+#         COMPILED BY MATTMX'S            #
+#       Kotlin DataPack Translator        #
+###########################################
 execute as @a[] at @s[] if block ~0 ~-1 ~0 minecraft:amethyst_block run effect give @s[] minecraft:speed 1 5 true
 execute as @a[] at @s[] if block ~0 ~-1 ~0 minecraft:amethyst_block run title @s[] title {"text":""}
 execute as @a[] at @s[] if block ~0 ~-1 ~0 minecraft:amethyst_block run title @s[] subtitle {"color":"aqua","text":"Run!"}

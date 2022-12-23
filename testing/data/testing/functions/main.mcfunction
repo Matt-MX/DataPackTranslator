@@ -1,5 +1,7 @@
-# Compiled by MattMX's DataPackTranslator.
-# All rights reserved.
+###########################################
+#         COMPILED BY MATTMX'S            #
+#       Kotlin DataPack Translator        #
+###########################################
 scoreboard objectives add use_carrot_stick minecraft.used:minecraft.carrot_on_a_stick
 scoreboard objectives remove use_carrot_stick
 scoreboard objectives add use_carrot_stick minecraft.used:minecraft.carrot_on_a_stick

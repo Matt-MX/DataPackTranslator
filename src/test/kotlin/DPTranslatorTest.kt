@@ -13,6 +13,15 @@ fun main() {
 
     lateinit var usedItemVariable: DPVariable
 
+    translator["vars"] = {
+
+        val x = variable("x")
+        val y = variable("y")
+
+        val z = x * y storeSafely "z"
+
+    }
+
     translator["main"] = {
         runOnLoad = true
 
