@@ -1,7 +1,7 @@
-package com.mattmx.datapack.variables.executes
+package com.mattmx.datapack.objects.executes
 
 import com.mattmx.datapack.DataPackTranslator
-import com.mattmx.datapack.variables.executes.selector.EntitySelector
+import com.mattmx.datapack.objects.executes.selector.EntitySelector
 
 open class ExecuteCondition(val value: String, val name: String) {
 }

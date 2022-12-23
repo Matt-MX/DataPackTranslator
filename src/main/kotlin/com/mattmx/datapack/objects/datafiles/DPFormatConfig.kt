@@ -1,4 +1,4 @@
-package com.mattmx.datapack.variables.datafiles
+package com.mattmx.datapack.objects.datafiles
 
 import com.mattmx.datapack.util.Module
 

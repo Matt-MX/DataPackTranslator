@@ -1,6 +1,6 @@
-package com.mattmx.datapack.variables.loop
+package com.mattmx.datapack.objects.loop
 
-import com.mattmx.datapack.variables.DPVariable
+import com.mattmx.datapack.objects.DPVariable
 
 abstract class DPLoop {
     open lateinit var varName: String

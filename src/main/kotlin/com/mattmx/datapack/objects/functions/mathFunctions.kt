@@ -1,7 +1,7 @@
-package com.mattmx.datapack.variables.functions
+package com.mattmx.datapack.objects.functions
 
 import com.mattmx.datapack.FunctionBuilder
-import com.mattmx.datapack.variables.DPVariable
+import com.mattmx.datapack.objects.DPVariable
 
 fun FunctionBuilder.sqrt(x: DPVariable) =
     functionWrapper("sqrt") {

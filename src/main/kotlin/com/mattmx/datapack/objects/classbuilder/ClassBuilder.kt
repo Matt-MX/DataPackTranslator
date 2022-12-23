@@ -1,7 +1,7 @@
-package com.mattmx.datapack.variables.classbuilder
+package com.mattmx.datapack.objects.classbuilder
 
 import com.mattmx.datapack.FunctionBuilder
-import com.mattmx.datapack.variables.DPVariable
+import com.mattmx.datapack.objects.DPVariable
 
 class ClassBuilder(val functionBuilder: FunctionBuilder, val name: String) {
     val variables = arrayListOf<DPVariable>()

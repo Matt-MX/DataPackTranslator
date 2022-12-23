@@ -1,4 +1,4 @@
-package com.mattmx.datapack.variables.executes.selector
+package com.mattmx.datapack.objects.executes.selector
 
 class EntitySelector(val initial: String) : Selector {
     var condition: EntityCondition<*>? = null

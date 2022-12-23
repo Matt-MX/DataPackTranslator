@@ -2,14 +2,14 @@ import com.mattmx.datapack.DataPackTranslator
 import com.mattmx.datapack.enums.EffectAction
 import com.mattmx.datapack.mappings.DataPackMappings
 import com.mattmx.datapack.util.*
-import com.mattmx.datapack.variables.DPVariable
-import com.mattmx.datapack.variables.executes.block
-import com.mattmx.datapack.variables.executes.location
-import com.mattmx.datapack.variables.executes.selector.*
-import com.mattmx.datapack.variables.functions.FunctionWrapper
-import com.mattmx.datapack.variables.functions.random
-import com.mattmx.datapack.variables.functions.sqrt
-import com.mattmx.datapack.variables.loop.seconds
+import com.mattmx.datapack.objects.DPVariable
+import com.mattmx.datapack.objects.executes.block
+import com.mattmx.datapack.objects.executes.location
+import com.mattmx.datapack.objects.executes.selector.*
+import com.mattmx.datapack.objects.functions.FunctionWrapper
+import com.mattmx.datapack.objects.functions.random
+import com.mattmx.datapack.objects.functions.sqrt
+import com.mattmx.datapack.objects.loop.seconds
 
 fun main() {
     val translator = DataPackTranslator("testing", DataPackMappings.TESTING)

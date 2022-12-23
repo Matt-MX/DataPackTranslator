@@ -1,6 +1,6 @@
-package com.mattmx.datapack.variables.executes.selector
+package com.mattmx.datapack.objects.executes.selector
 
-import com.mattmx.datapack.variables.DPVariable
+import com.mattmx.datapack.objects.DPVariable
 
 open class EntityCondition<T : Any>(val name: String) {
     private var conditions = arrayListOf<String>()

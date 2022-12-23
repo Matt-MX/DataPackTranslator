@@ -1,9 +1,9 @@
-package com.mattmx.datapack.variables.loop
+package com.mattmx.datapack.objects.loop
 
 import com.mattmx.datapack.DataPackTranslator
 import com.mattmx.datapack.util.global
-import com.mattmx.datapack.variables.DPVariable
-import com.mattmx.datapack.variables.executes.ExecuteBuilder
+import com.mattmx.datapack.objects.DPVariable
+import com.mattmx.datapack.objects.executes.ExecuteBuilder
 import java.util.*
 
 class DPForLoop(

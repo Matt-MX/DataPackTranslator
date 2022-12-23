@@ -1,8 +1,8 @@
-package com.mattmx.datapack.variables.functions
+package com.mattmx.datapack.objects.functions
 
 import com.mattmx.datapack.FunctionBuilder
-import com.mattmx.datapack.variables.DPVariable
-import com.mattmx.datapack.variables.executes.selector.player
+import com.mattmx.datapack.objects.DPVariable
+import com.mattmx.datapack.objects.executes.selector.player
 
 /**
  * This class allows you to create function wrappers.

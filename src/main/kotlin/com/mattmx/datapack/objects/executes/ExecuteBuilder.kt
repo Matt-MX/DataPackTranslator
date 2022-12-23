@@ -1,10 +1,10 @@
-package com.mattmx.datapack.variables.executes
+package com.mattmx.datapack.objects.executes
 
 import com.mattmx.datapack.FunctionBuilder
-import com.mattmx.datapack.variables.Block
-import com.mattmx.datapack.variables.Location
-import com.mattmx.datapack.variables.executes.selector.EntitySelector
-import com.mattmx.datapack.variables.executes.selector.selected
+import com.mattmx.datapack.objects.Block
+import com.mattmx.datapack.objects.Location
+import com.mattmx.datapack.objects.executes.selector.EntitySelector
+import com.mattmx.datapack.objects.executes.selector.selected
 
 class ExecuteBuilder(val function: FunctionBuilder, val parent: ExecuteBuilder? = null) {
     val children = linkedMapOf<ExecuteCondition, ExecuteBuilder>()

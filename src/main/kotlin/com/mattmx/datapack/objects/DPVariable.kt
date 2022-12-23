@@ -1,4 +1,4 @@
-package com.mattmx.datapack.variables
+package com.mattmx.datapack.objects
 
 import com.mattmx.datapack.FunctionBuilder
 import com.mattmx.datapack.util.global

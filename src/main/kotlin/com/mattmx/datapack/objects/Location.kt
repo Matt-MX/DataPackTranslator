@@ -1,4 +1,4 @@
-package com.mattmx.datapack.variables
+package com.mattmx.datapack.objects
 
 class Location(
     var x: String = "~",

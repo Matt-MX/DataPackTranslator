@@ -1,20 +1,20 @@
 package com.mattmx.datapack
 
 import com.mattmx.datapack.enums.EffectAction
-import com.mattmx.datapack.variables.Location
+import com.mattmx.datapack.objects.Location
 import com.mattmx.datapack.enums.TitleType
 import com.mattmx.datapack.util.json
-import com.mattmx.datapack.variables.DPList
-import com.mattmx.datapack.variables.DPVariable
-import com.mattmx.datapack.variables.executes.ExecuteBuilder
-import com.mattmx.datapack.variables.executes.selector.EntitySelector
-import com.mattmx.datapack.variables.executes.selector.ExecIfCondition
-import com.mattmx.datapack.variables.executes.selector.GameMode
-import com.mattmx.datapack.variables.executes.selector.selected
-import com.mattmx.datapack.variables.loop.DPForLoop
-import com.mattmx.datapack.variables.loop.DPWhileLoop
-import com.mattmx.datapack.variables.loop.LoopInvocation
-import com.mattmx.datapack.variables.loop.ScheduleTime
+import com.mattmx.datapack.objects.DPList
+import com.mattmx.datapack.objects.DPVariable
+import com.mattmx.datapack.objects.executes.ExecuteBuilder
+import com.mattmx.datapack.objects.executes.selector.EntitySelector
+import com.mattmx.datapack.objects.executes.selector.ExecIfCondition
+import com.mattmx.datapack.objects.executes.selector.GameMode
+import com.mattmx.datapack.objects.executes.selector.selected
+import com.mattmx.datapack.objects.loop.DPForLoop
+import com.mattmx.datapack.objects.loop.DPWhileLoop
+import com.mattmx.datapack.objects.loop.LoopInvocation
+import com.mattmx.datapack.objects.loop.ScheduleTime
 import net.kyori.adventure.text.Component
 
 open class FunctionBuilder(val translator: DataPackTranslator, val builder: ArrayList<String> = arrayListOf()) {

@@ -1,4 +1,4 @@
-package com.mattmx.datapack.variables.loop
+package com.mattmx.datapack.objects.loop
 
 class ScheduleTime(val amount: Int, val unit: Char) {
     override fun toString() = "$amount$unit"

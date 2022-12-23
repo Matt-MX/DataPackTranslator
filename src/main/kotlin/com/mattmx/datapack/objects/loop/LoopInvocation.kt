@@ -1,4 +1,4 @@
-package com.mattmx.datapack.variables.loop
+package com.mattmx.datapack.objects.loop
 
 import com.mattmx.datapack.DataPackTranslator
 import com.mattmx.datapack.FunctionBuilder

@@ -1,4 +1,4 @@
-package com.mattmx.datapack.variables
+package com.mattmx.datapack.objects
 
 enum class ScoreboardDisplay(val translatable: String) {
     BELOW_NAME("belowName"),
