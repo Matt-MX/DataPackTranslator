@@ -18,6 +18,8 @@ fun main() {
         val x = variable("x")
         val y = variable("y")
 
+        // Since kotlin doesn't have an override for assignment, we'll use an infix function
+        // to store the result safely into a variable called "z", that is then returned.
         val z = x * y storeSafely "z"
 
     }
