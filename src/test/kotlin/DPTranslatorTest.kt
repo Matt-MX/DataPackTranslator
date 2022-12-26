@@ -4,6 +4,7 @@ import com.mattmx.datapack.builders.item
 import com.mattmx.datapack.enums.EffectAction
 import com.mattmx.datapack.event.BlockMined
 import com.mattmx.datapack.event.ItemUsed
+import com.mattmx.datapack.gui.DPInventory
 import com.mattmx.datapack.mappings.DataPackMappings
 import com.mattmx.datapack.util.*
 import com.mattmx.datapack.objects.DPVariable
@@ -39,7 +40,16 @@ fun main() {
                 }
     }
 
-    translator.listener(BlockMined("block_mine", "oak_log")) {
+    val testInv = DPInventory(translator, "test")
+    testInv.setItem(0, item("diamond_sword") {
+        name = "&r&cTest item".color()
+    }.toString())
+    testInv.create()
+
+    translator("testgui") {
+        execAs(selected()) {
+            call("gui/test/init")
+        }
     }
 
     translator("vars") {
@@ -68,12 +78,12 @@ fun main() {
     }
 
     translator("countdown") {
-        var opposite = variable("opposite", default = 5).reset()
         repeat(6, 1.seconds()) {
-            opposite.update(this)
-            title(allPlayers(), "&6Countdown".color(), "&eDone in ".color() + opposite.component() + "s".color())
-            opposite--
+            val timeLeft = this.counterVariable()
+            title(allPlayers(), "&6Countdown".color(), "&eDone in ".color() + timeLeft.component() + "s".color())
         }
+        // todo after a for loop needs to be in a ::after function for this loop
+        title(allPlayers(), "".color(), "&eCountdown complete".color())
     }
 
     translator("main") {

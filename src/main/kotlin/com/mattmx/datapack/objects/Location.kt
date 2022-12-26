@@ -1,6 +1,6 @@
 package com.mattmx.datapack.objects
 
-class Location(
+open class Location(
     var x: String = "~",
     var y: String = "~",
     var z: String = "~"

@@ -7,12 +7,14 @@ import com.mattmx.datapack.objects.McMetaFile
 import com.mattmx.datapack.util.EntryType
 import com.mattmx.datapack.objects.datafiles.DPFormatConfig
 import com.mattmx.datapack.objects.datafiles.TickLoadFile
+import com.mattmx.datapack.util.funcNextRef
 import java.io.File
 
 class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
     val functions = hashMapOf<String, FunctionBuilder>()
     val listenersInitFunc = FunctionBuilder(this)
     val listenerFunc = FunctionBuilder(this)
+    val tempVarCleanup = FunctionBuilder(this)
     val meta = McMetaFile(id)
     val config = DPFormatConfig()
     private val load = TickLoadFile(id)
@@ -26,20 +28,24 @@ class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
 
     inline operator fun set(fileName: String, value: FunctionBuilder.() -> Unit) {
         val func = FunctionBuilder(this)
-        value(func)
         set(fileName, func)
+        value(func)
+        if (func.runOnLoad) load(fileName)
+        if (func.runOnTick) tick(fileName)
     }
 
     inline operator fun invoke(fileName: String, value: FunctionBuilder.() -> Unit) = set(fileName, value)
 
     operator fun invoke(fileName: String, value: FunctionBuilder) = set(fileName, value)
 
-    private fun load(id: String): DataPackTranslator {
+    operator fun get(builder: FunctionBuilder) = functions.entries.first { it.value == builder }.key
+
+    fun load(id: String): DataPackTranslator {
         load.values += "${this.id}:$id"
         return this
     }
 
-    private fun tick(id: String): DataPackTranslator {
+    fun tick(id: String): DataPackTranslator {
         tick.values += "${this.id}:$id"
         return this
     }
@@ -58,6 +64,7 @@ class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
         listenerFunc.runOnTick = true
         this["listeners_init"] = listenersInitFunc
         this["listeners_run"] = listenerFunc
+        this["temp_var_cleanup"] = tempVarCleanup
 
         // Create directory
         val topFile = File("./$id/")
@@ -80,17 +87,23 @@ class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
 
         // Write all functions
         if (functions.isNotEmpty()) {
-            functions.forEach { (name, content) ->
-                val file = File("$funcFile/$name.mcfunction")
-                file.parentFile.mkdirs()
-                file.createNewFile()
-                file.writeText(
-                    "###########################################\n"
-                            + "#         COMPILED BY MATTMX'S            #\n"
-                            + "#       Kotlin DataPack Translator        #\n"
-                            + "###########################################\n"
-                            + content.toString()
-                )
+            functions.forEach { (name, function) ->
+                // Get all the split content per function
+                val splitContent = function.build()
+                splitContent.forEachIndexed { index, it ->
+                    val funcName = if (index == 0) name else "${name}_${index}"
+                    val content = it.replace(funcNextRef, "${index + 1}")
+                    val file = File("$funcFile/$funcName.mcfunction")
+                    file.parentFile.mkdirs()
+                    file.createNewFile()
+                    file.writeText(
+                        "###########################################\n"
+                                + "#         COMPILED BY MATTMX'S            #\n"
+                                + "#       Kotlin DataPack Translator        #\n"
+                                + "###########################################\n"
+                                + content
+                    )
+                }
             }
         }
 

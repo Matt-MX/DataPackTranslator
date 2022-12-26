@@ -4,6 +4,7 @@ import com.mattmx.datapack.FunctionBuilder
 import com.mattmx.datapack.objects.Block
 import com.mattmx.datapack.objects.Location
 import com.mattmx.datapack.objects.executes.selector.EntitySelector
+import com.mattmx.datapack.objects.executes.selector.ExecPositionedCondition
 import com.mattmx.datapack.objects.executes.selector.selected
 
 class ExecuteBuilder(val function: FunctionBuilder, val parent: ExecuteBuilder? = null) {
@@ -14,6 +15,7 @@ class ExecuteBuilder(val function: FunctionBuilder, val parent: ExecuteBuilder? 
     fun conditionAs(value: EntitySelector) = createCondition(AsCondition(value))
     fun conditionAt(value: EntitySelector = selected()) = createCondition(AtCondition(value.toString()))
     fun conditionStore(action: String) = createCondition(StoreCondition(action))
+    fun conditionPositioned(value: ExecPositionedCondition) = createCondition(PositionedCondition(value.toString()))
 
     private fun createCondition(condition: ExecuteCondition): ExecuteBuilder {
         val next = ExecuteBuilder(function, this)
@@ -57,6 +59,9 @@ class ExecuteBuilder(val function: FunctionBuilder, val parent: ExecuteBuilder? 
 
     fun execStore(action: String, builder: ExecuteBuilder.() -> Unit) =
         compile({ it.conditionStore(action) }, builder)
+
+    fun positioned(action: ExecPositionedCondition, builder: ExecuteBuilder.() -> Unit) =
+        compile({ it.conditionPositioned(action) }, builder)
 
     inline fun compile(
         condition: (ExecuteBuilder) -> ExecuteBuilder,

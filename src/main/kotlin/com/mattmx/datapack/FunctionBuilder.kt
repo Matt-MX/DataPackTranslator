@@ -18,6 +18,7 @@ import com.mattmx.datapack.objects.loop.ScheduleTime
 import net.kyori.adventure.text.Component
 
 open class FunctionBuilder(val translator: DataPackTranslator, val builder: ArrayList<String> = arrayListOf()) {
+    val parts = arrayListOf<MutableList<String>>()
     val mappings = translator.mappings
     var runOnLoad = false
     var runOnTick = false
@@ -79,16 +80,20 @@ open class FunctionBuilder(val translator: DataPackTranslator, val builder: Arra
             .replace("{mode}", gameMode.name.lowercase())
     }
 
-    fun repeat(times: Int, period: ScheduleTime = ScheduleTime(1, 't'), str: LoopInvocation.() -> Unit) {
-        val ret = DPForLoop(translator, str, times, period).build()
+    fun repeat(times: Int, period: ScheduleTime = ScheduleTime(0, 't'), str: LoopInvocation.() -> Unit) {
+        val ret = DPForLoop(translator, translator[this], str, times, period).build()
         builder += ret.third
         translator.functions[ret.first] = FunctionBuilder(translator, ArrayList(ret.second))
+        // Now we need to create a :: after
+        split()
     }
 
     fun repeat(period: ScheduleTime = ScheduleTime(1, 't'), str: LoopInvocation.() -> Unit) {
         val ret = DPWhileLoop(translator, str, null, period).build()
         builder += ret.third
         translator.functions[ret.first] = FunctionBuilder(translator, ArrayList(ret.second))
+        // Now we need to create a :: after
+        split()
     }
 
     fun variable(name: String, type: String = "dummy", default: Int? = null): DPVariable =
@@ -114,6 +119,11 @@ open class FunctionBuilder(val translator: DataPackTranslator, val builder: Arra
             .replace("{name}", "${translator.id}:$function")
             .replace("{time}", time.toString())
             .replace("{action}", "replace")
+    }
+
+    private fun split() {
+        parts += builder.toMutableList()
+        builder.clear()
     }
 
     fun execIf(vararg conditions: ExecIfCondition<*>, builder: ExecuteBuilder.() -> Unit) =
@@ -145,7 +155,14 @@ open class FunctionBuilder(val translator: DataPackTranslator, val builder: Arra
 
     fun lines() = builder
 
+    @Deprecated("A single function can now be split into multiple files.", ReplaceWith("builder.joinToString(\"\\n\")"))
     override fun toString(): String = builder.joinToString("\n")
+
+    fun build() : List<String> {
+        parts += builder.toMutableList()
+        builder.clear()
+        return parts.map { it.joinToString("\n") }
+    }
 }
 
 inline fun functionBuilder(translator: DataPackTranslator, builder: FunctionBuilder.() -> Unit): FunctionBuilder {

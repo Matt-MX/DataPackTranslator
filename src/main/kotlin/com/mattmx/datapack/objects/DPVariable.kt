@@ -3,6 +3,7 @@ package com.mattmx.datapack.objects
 import com.mattmx.datapack.FunctionBuilder
 import com.mattmx.datapack.enums.RenderType
 import com.mattmx.datapack.enums.ScoreboardDisplay
+import com.mattmx.datapack.objects.loop.ticks
 import com.mattmx.datapack.util.global
 import net.kyori.adventure.text.Component
 import java.util.*
@@ -188,10 +189,15 @@ class DPVariable(
 
     private fun returnOperation(y: DPVariable, operand: String): DPVariable {
         // Create a variable to store this value in
-        val temp = DPVariable(function, "temp_${UUID.randomUUID()}")
+        val temp = DPVariable(function, "temp_${UUID.randomUUID()}").create()
         // Store this value in that variable
         temp set this
-        temp.varOperation(global, id, operand, id2 = y.id)
+        function += temp.varOperation(global, temp.id, operand, id2 = y.id)
+        // Schedule this temp variable to be deleted next tick, these temp vars
+        // should not be used to store values persistently.
+        function.translator.tempVarCleanup += temp.destroyString()
+        // Call the function 1 tick later
+        function.schedule("temp_var_cleanup", 1.ticks())
         return temp
     }
 

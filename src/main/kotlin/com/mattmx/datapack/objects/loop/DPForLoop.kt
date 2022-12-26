@@ -4,10 +4,12 @@ import com.mattmx.datapack.DataPackTranslator
 import com.mattmx.datapack.util.global
 import com.mattmx.datapack.objects.DPVariable
 import com.mattmx.datapack.objects.executes.ExecuteBuilder
+import com.mattmx.datapack.util.funcNextRef
 import java.util.*
 
 class DPForLoop(
     val translator: DataPackTranslator,
+    val calledFrom: String,
     inline val exec: LoopInvocation.() -> Unit,
     val times: Int,
     val scheduleTime: ScheduleTime
@@ -23,10 +25,9 @@ class DPForLoop(
         // Make a string to schedule it using @scheduleTime
         // Run the actual code we want
         val functionBuilder = LoopInvocation(translator, this)
+        variable = DPVariable(functionBuilder, varName, initial = 0)
         exec(functionBuilder)
         functionList += functionBuilder.toString()
-
-        variable = DPVariable(functionBuilder, varName, initial = 0)
 
         mainList += variable.createString().split("\n")
         // The following line will initialize the first execution of the loop, the file will recursively call itself
@@ -38,6 +39,7 @@ class DPForLoop(
         functionList += ExecuteBuilder(functionBuilder)
             .conditionIf("score $global $varName matches $times")
             .run {
+                call("${translator.id}:${calledFrom}_$funcNextRef")
                 this += translator.mappings["schedule.clear"]!!
                     .replace("{name}", "${translator.id}:$fileName")
                 this += variable.destroyString()
@@ -45,10 +47,12 @@ class DPForLoop(
         functionList += ExecuteBuilder(functionBuilder)
             .conditionUnless("score $global $varName matches $times")
             .run {
-                this += translator.mappings["schedule.create"]!!
-                    .replace("{name}", "${translator.id}:$fileName")
-                    .replace("{time}", scheduleTime.toString())
-                    .replace("{action}", "replace")
+                if (scheduleTime.amount == 0) {
+                    // Call function immediately
+                    call("${translator.id}:$fileName")
+                } else {
+                    schedule("${translator.id}:$fileName", scheduleTime)
+                }
             }.toString()
 
         return Triple(fileName, functionList, mainList)
