@@ -1,6 +1,8 @@
 package com.mattmx.datapack.objects
 
 import com.mattmx.datapack.FunctionBuilder
+import com.mattmx.datapack.enums.RenderType
+import com.mattmx.datapack.enums.ScoreboardDisplay
 import com.mattmx.datapack.util.global
 import net.kyori.adventure.text.Component
 import java.util.*
