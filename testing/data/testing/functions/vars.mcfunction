@@ -16,16 +16,16 @@ scoreboard players operation $global result = out nnmath_sqrt
 tellraw @a[] {"color":"gray","extra":[{"score":{"name":"$global","objective":"result"}}],"text":"Random number: "}
 tellraw @a[] {"color":"gray","extra":[{"score":{"name":"$global","objective":"x"}}],"text":"x = "}
 tellraw @a[] {"color":"gray","extra":[{"score":{"name":"$global","objective":"y"}}],"text":"y = "}
-scoreboard objectives add temp_bce9d29a-3c6a-4e90-821b-33cfc42c658d dummy
-scoreboard players operation $global temp_bce9d29a-3c6a-4e90-821b-33cfc42c658d = $global x
-scoreboard players operation $global temp_bce9d29a-3c6a-4e90-821b-33cfc42c658d *= $global x
+scoreboard objectives add temp_d252a16b-e19e-42fe-b912-490ac929f3fb dummy
+scoreboard players operation $global temp_d252a16b-e19e-42fe-b912-490ac929f3fb = $global x
+scoreboard players operation $global temp_d252a16b-e19e-42fe-b912-490ac929f3fb *= $global x
 schedule function testing:temp_var_cleanup 1t replace
-scoreboard objectives add temp_16a82b3c-5822-4093-bf39-0d1588d8570a dummy
-scoreboard players operation $global temp_16a82b3c-5822-4093-bf39-0d1588d8570a = $global temp_bce9d29a-3c6a-4e90-821b-33cfc42c658d
-scoreboard players operation $global temp_16a82b3c-5822-4093-bf39-0d1588d8570a *= $global y
+scoreboard objectives add temp_606a0cea-928e-4696-9a0c-54ad34c505bd dummy
+scoreboard players operation $global temp_606a0cea-928e-4696-9a0c-54ad34c505bd = $global temp_d252a16b-e19e-42fe-b912-490ac929f3fb
+scoreboard players operation $global temp_606a0cea-928e-4696-9a0c-54ad34c505bd *= $global y
 schedule function testing:temp_var_cleanup 1t replace
 scoreboard objectives add z dummy
-scoreboard players operation $global z = $global temp_16a82b3c-5822-4093-bf39-0d1588d8570a
-scoreboard objectives remove temp_16a82b3c-5822-4093-bf39-0d1588d8570a
+scoreboard players operation $global z = $global temp_606a0cea-928e-4696-9a0c-54ad34c505bd
+scoreboard objectives remove temp_606a0cea-928e-4696-9a0c-54ad34c505bd
 tellraw @a[] {"color":"gray","extra":[{"score":{"name":"$global","objective":"z"}},{"text":")"}],"text":"z = x * y (="}
 execute if score $global x matches 10.. run tellraw @a[name=MattMX] {"color":"light_purple","text":"Hi, matt, x >= 10"}

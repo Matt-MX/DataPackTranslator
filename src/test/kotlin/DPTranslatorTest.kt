@@ -15,6 +15,7 @@ import com.mattmx.datapack.objects.functions.FunctionWrapper
 import com.mattmx.datapack.objects.functions.random
 import com.mattmx.datapack.objects.functions.sqrt
 import com.mattmx.datapack.objects.loop.seconds
+import com.mattmx.datapack.util.raycast.raycast
 
 fun main() {
     val translator = DataPackTranslator("testing", DataPackMappings.TESTING)
@@ -23,6 +24,11 @@ fun main() {
         // Adds module math, math functions like sqrt can now be called.
         modules += Module.MATH
         executeBlockStoredInFunction = true
+    }
+
+    translator("raycast") {
+        val raycastResult = raycast(selected(), 200, 0.1, true) storeSafely "raycast_result"
+        tellraw(allPlayers(), "&cRaycast result: ".color() + raycastResult.component())
     }
 
     translator.listener(ItemUsed("carrot_on_stick_used", "carrot_on_a_stick")) {

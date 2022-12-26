@@ -130,7 +130,7 @@ open class FunctionBuilder(val translator: DataPackTranslator, val builder: Arra
         exec({ it.conditionIf(conditions.joinToString(" if ")) }, builder)
 
     fun execUnless(vararg conditions: String, builder: ExecuteBuilder.() -> Unit) =
-        exec({ it.conditionIf(conditions.joinToString(" unless ")) }, builder)
+        exec({ it.conditionUnless(conditions.joinToString(" unless ")) }, builder)
 
     fun execAs(condition: EntitySelector, builder: ExecuteBuilder.() -> Unit) =
         exec({ it.conditionAs(condition) }, builder)
