@@ -26,6 +26,7 @@ fun main() {
         val x = variable("x", default = 9).reset()
         val y = variable("y", default = 2).reset()
 
+        // Generate a random number between 0, 100 and store it in a var called "result"
         val result = random(0, 100) copy "result"
         tellraw(allPlayers(), "&7Random number: ".color() + result.component())
 
