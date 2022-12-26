@@ -2,6 +2,7 @@
   "id": "testing",
   "values": [
     "testing:main",
+    "testing:listeners_init",
     "nnmath:setup"
   ]
 }

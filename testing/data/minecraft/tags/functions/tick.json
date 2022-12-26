@@ -1,7 +1,7 @@
 {
   "id": "testing",
   "values": [
-    "testing:carrot_on_stick",
-    "testing:runeffects"
+    "testing:runeffects",
+    "testing:listeners_run"
   ]
 }

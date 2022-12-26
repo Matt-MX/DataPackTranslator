@@ -17,6 +17,7 @@ dependencies {
     implementation("net.kyori:adventure-api:4.12.0")
     implementation("net.kyori:adventure-text-serializer-legacy:4.12.0")
     implementation("net.kyori:adventure-text-serializer-gson:4.12.0")
+    implementation("net.benwoodworth.knbt:knbt:0.11.3")
 }
 
 tasks.test {

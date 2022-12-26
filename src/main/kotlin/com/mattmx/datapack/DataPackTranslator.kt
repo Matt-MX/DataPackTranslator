@@ -1,6 +1,7 @@
 package com.mattmx.datapack
 
 import com.google.gson.GsonBuilder
+import com.mattmx.datapack.event.Event
 import com.mattmx.datapack.mappings.DataPackMappings
 import com.mattmx.datapack.objects.McMetaFile
 import com.mattmx.datapack.util.EntryType
@@ -10,6 +11,8 @@ import java.io.File
 
 class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
     val functions = hashMapOf<String, FunctionBuilder>()
+    val listenersInitFunc = FunctionBuilder(this)
+    val listenerFunc = FunctionBuilder(this)
     val meta = McMetaFile(id)
     val config = DPFormatConfig()
     private val load = TickLoadFile(id)
@@ -29,6 +32,8 @@ class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
 
     inline operator fun invoke(fileName: String, value: FunctionBuilder.() -> Unit) = set(fileName, value)
 
+    operator fun invoke(fileName: String, value: FunctionBuilder) = set(fileName, value)
+
     private fun load(id: String): DataPackTranslator {
         load.values += "${this.id}:$id"
         return this
@@ -39,8 +44,20 @@ class DataPackTranslator(val id: String, val mappings: DataPackMappings) {
         return this
     }
 
+    inline fun listener(event: Event, callback: FunctionBuilder.() -> Unit) {
+        val callbackFunc = FunctionBuilder(this)
+        callback(callbackFunc)
+        event.callback = callbackFunc
+        event.build(this, listenersInitFunc, listenerFunc)
+    }
+
     fun build() {
         val gson = GsonBuilder().setPrettyPrinting().create()
+
+        listenersInitFunc.runOnLoad = true
+        listenerFunc.runOnTick = true
+        this["listeners_init"] = listenersInitFunc
+        this["listeners_run"] = listenerFunc
 
         // Create directory
         val topFile = File("./$id/")

@@ -1,5 +1,9 @@
 import com.mattmx.datapack.DataPackTranslator
+import com.mattmx.datapack.builders.ItemBuilder
+import com.mattmx.datapack.builders.item
 import com.mattmx.datapack.enums.EffectAction
+import com.mattmx.datapack.event.BlockMined
+import com.mattmx.datapack.event.ItemUsed
 import com.mattmx.datapack.mappings.DataPackMappings
 import com.mattmx.datapack.util.*
 import com.mattmx.datapack.objects.DPVariable
@@ -20,9 +24,25 @@ fun main() {
         executeBlockStoredInFunction = true
     }
 
-    lateinit var usedItemVariable: DPVariable
+    translator.listener(ItemUsed("carrot_on_stick_used", "carrot_on_a_stick")) {
+        tellraw(allPlayers(), "&6Carrot on stick was used!".color())
+        this += "give @a " +
+                item("carrot_on_a_stick") {
+                    name = "&a&l[CLICK]".color()
+                    lore {
+                        this += "&7Lore line one".color()
+                        this += "&eLore line two".color()
+                    }
+                    enchantments {
+                        this["minecraft:sharpness"] = 20
+                    }
+                }
+    }
 
-    translator("vars")  {
+    translator.listener(BlockMined("block_mine", "oak_log")) {
+    }
+
+    translator("vars") {
         val x = variable("x", default = 9).reset()
         val y = variable("y", default = 2).reset()
 
@@ -48,7 +68,7 @@ fun main() {
     }
 
     translator("countdown") {
-        var opposite = variable("opposite", default = 5)
+        var opposite = variable("opposite", default = 5).reset()
         repeat(6, 1.seconds()) {
             opposite.update(this)
             title(allPlayers(), "&6Countdown".color(), "&eDone in ".color() + opposite.component() + "s".color())
@@ -59,29 +79,7 @@ fun main() {
     translator("main") {
         runOnLoad = true
 
-        usedItemVariable = variable("use_carrot_stick", "minecraft.used:minecraft.carrot_on_a_stick")
-        usedItemVariable.reset()
-
         call("notifyloaded")
-    }
-
-    translator("carrot_on_stick") {
-        runOnTick = true
-
-        execAs(allPlayers() where (escore(usedItemVariable) gte 1)) {
-            execAt {
-                // todo different run functions should be in different func files for efficiency
-                run {
-                    tellraw(selected(), "&eYou used it!".color())
-                    // Set a variable for this player
-                    repeat(5, 1.seconds()) {
-                        teleport(allPlayers() where (escore(usedItemVariable) gte 1), location(y = "~2"))
-                    }
-                    // Only reset if variable is not set
-                    this += "scoreboard players reset @s ${usedItemVariable.id}"
-                }
-            }
-        }.build()
     }
 
     translator("notifyloaded") {
