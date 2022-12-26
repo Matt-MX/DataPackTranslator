@@ -88,7 +88,7 @@ fun main() {
             val timeLeft = this.counterVariable()
             title(allPlayers(), "&6Countdown".color(), "&eDone in ".color() + timeLeft.component() + "s".color())
         }
-        // todo after a for loop needs to be in a ::after function for this loop
+        // Below is another file
         title(allPlayers(), "".color(), "&eCountdown complete".color())
     }
 
